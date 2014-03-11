@@ -1,3 +1,5 @@
+# Oops not done yet; doesn't work
+#
 # Submits search job, waits for completion and returns results.  Pass the query
 # via stdin.
 #
