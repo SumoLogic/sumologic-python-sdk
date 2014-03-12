@@ -1,1 +1,0 @@
-| csv _raw delim=' ' extract _, _, site, method, time | timeslice 10s | count, sum(time), avg(time) group site, method, _timeslice | save view site
