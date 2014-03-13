@@ -14,7 +14,8 @@ import time
 from sumologic import SumoLogic
 
 LIMIT = 42
-EMAIL = 'yoway@sumologic.com'
+FROM = 'worker@sumologic.com'
+TO = 'yoway@sumologic.com'
 
 args = sys.argv
 sumo = SumoLogic(args[1], args[2])
@@ -42,9 +43,9 @@ if status['state'] == 'DONE GATHERING RESULTS':
 	r = sumo.search_job_records(sj, limit=limit)
 	print r
 	msg = MIMEText(json.dumps(r))
-	msg['From'] = 'Sumo Worker'
-	msg['To'] = EMAIL
+	msg['From'] = FROM
+	msg['To'] = TO
 	msg['Subject'] = 'Search Jobs Results'
 	smtp = SMTP('localhost')
-	smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
+	smtp.sendmail(FROM, [TO], msg.as_string())
 	smtp.quit()
