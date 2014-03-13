@@ -5,6 +5,7 @@
 #
 # cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> <fromTime> <toTime>
 
+from email.mime.text import MIMEText
 import json
 from smtplib import SMTP
 import sys
@@ -40,7 +41,10 @@ if status['state'] == 'DONE GATHERING RESULTS':
 	limit = count if count < LIMIT else LIMIT # compensate bad limit check
 	r = sumo.search_job_records(sj, limit=limit)
 	print r
-	msg = { 'From': 'Sumo Worker', 'To': EMAIL, 'Subject': json.dumps(r) }
+	msg = MIMEText(json.dumps(r))
+	msg['From'] = 'Sumo Worker'
+	msg['To'] = EMAIL
+	msg['Subject'] = 'Search Jobs Results'
 	smtp = SMTP('localhost')
 	smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
 	smtp.quit()
