@@ -33,6 +33,16 @@ class SumoLogic:
 		r = self.get('/search/jobs/' + str(search_job['id']))
 		return json.loads(r.text)
 
+	def search_job_messages(self, search_job, limit=None, offset=0):
+		params = {'limit': limit, 'offset': offset}
+		r = self.get('/search/jobs/' + str(search_job['id']) + '/messages', params)
+		return json.loads(r.text)
+
+	def search_job_records(self, search_job, limit=None, offset=0):
+		params = {'limit': limit, 'offset': offset}
+		r = self.get('/search/jobs/' + str(search_job['id']) + '/records', params)
+		return json.loads(r.text)
+
 	def collectors(self, limit=None, offset=None):
 		params = {'limit': limit, 'offset': offset}
 		r = self.get('/collectors', params)

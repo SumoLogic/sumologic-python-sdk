@@ -1,6 +1,9 @@
 # Renames a category across all collectors and sources in a given account.
 #
 # python mv-cat.py <accessId/email> <accessKey/password> <fromName> <toName>
+#
+# TODO update query category constraints
+# TODO regex
 
 import sys
 
