@@ -1,9 +1,13 @@
-# Oops not done yet; doesn't work
-#
 # Submits search job, waits for completion, then prints and emails results.
 # Pass the query via stdin.
 #
-# cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> <fromTime> <toTime>
+# cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
+# <fromEpoch> <toEpoch> <timeZone>
+#
+# Example:
+#
+# cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
+# 1408643380441 1408649380441 PST
 
 from email.mime.text import MIMEText
 import json
@@ -35,7 +39,7 @@ while status['state'] != 'DONE GATHERING RESULTS':
 	delay *= 2
 	status = sumo.search_job_status(sj)
 
-print status
+print status['state']
 
 if status['state'] == 'DONE GATHERING RESULTS':
 	count = status['recordCount']
