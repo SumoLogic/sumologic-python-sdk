@@ -1,5 +1,5 @@
-# Submits search job, waits for completion, then prints and emails results.
-# Pass the query via stdin.
+# Submits search job, waits for completion, then prints and emails _messages_
+# (as opposed to records).  Pass the query via stdin.
 #
 # cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
 # <fromEpoch> <toEpoch> <timeZone>
