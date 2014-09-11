@@ -2,7 +2,10 @@
 # (as opposed to records).  Pass the query via stdin.
 #
 # cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
-# <fromEpoch> <toEpoch> <timeZone>
+# <fromDate> <toDate> <timeZone>
+#
+# Note: fromDate and toDate must be either ISO 8601 date-times or epoch
+#       milliseconds
 #
 # Example:
 #
