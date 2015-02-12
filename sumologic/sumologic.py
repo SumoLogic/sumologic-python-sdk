@@ -72,20 +72,30 @@ class SumoLogic:
 
     def source(self, collector_id, source_id):
         r = self.get('/collectors/' + str(collector_id) + '/sources/' + str(source_id))
+        #print "+source %s" % r.status_code
+        #print "+source %s" % r.headers
+        #print "+source %s" % r.text
         return json.loads(r.text), r.headers['etag']
 
     def update_source(self, collector_id, source, etag):
+        print "+update %s" % source
         headers = {'If-Match': etag}
-        return self.put('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']), source, headers)
+        r = self.put('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']), source, headers)
+        print "+update %s" % r.status_code
+        print "+update %s" % r.headers
+        print "+update %s" % r.text
+        return r
 
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
     # Danger Zone: this part of REST API likely to change since "dashboard" and "content" overlap
 
-    def dashboards(self, include_monitors=False):
-        params = {'monitors': include_monitors}
+    def dashboards(self, monitors=False):
+        params = {'monitors': monitors}
         r = self.get('/dashboards', params)
+        return json.loads(r.text)['dashboards']
 
-    def content(self):
-        r = self.get('/content/Private')
+    def dashboard(self, dashboard_id):
+        r = self.get('/dashboards/' + str(dashboard_id))
+        return json.loads(r.text)['dashboardMonitorDatas']
