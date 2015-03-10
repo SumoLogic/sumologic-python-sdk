@@ -25,7 +25,6 @@ class SumoLogic:
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
         params = {'q': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone}
-        print params
         r = self.get('/logs/search', params)
         return json.loads(r.text)
 
