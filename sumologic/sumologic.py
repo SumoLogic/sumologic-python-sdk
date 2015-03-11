@@ -30,7 +30,6 @@ class SumoLogic:
 
     def search_job(self, query, fromTime=None, toTime=None, timeZone='UTC'):
         params = {'query': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone}
-        print params
         r = self.post('/search/jobs', params)
         return json.loads(r.text)
 
@@ -71,18 +70,11 @@ class SumoLogic:
 
     def source(self, collector_id, source_id):
         r = self.get('/collectors/' + str(collector_id) + '/sources/' + str(source_id))
-        #print "+source %s" % r.status_code
-        #print "+source %s" % r.headers
-        #print "+source %s" % r.text
         return json.loads(r.text), r.headers['etag']
 
     def update_source(self, collector_id, source, etag):
-        print "+update %s" % source
         headers = {'If-Match': etag}
         r = self.put('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']), source, headers)
-        print "+update %s" % r.status_code
-        print "+update %s" % r.headers
-        print "+update %s" % r.text
         return r
 
     def delete_source(self, collector_id, source):
