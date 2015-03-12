@@ -24,7 +24,7 @@ class SumoLogic:
         return self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
-        params = {'q': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone}
+        params = {'q': query, 'from': fromTime, 'to': toTime, 'tz': timeZone}
         r = self.get('/logs/search', params)
         return json.loads(r.text)
 
