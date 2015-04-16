@@ -80,7 +80,17 @@ class SumoLogic:
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
-    # Danger Zone: this part of REST API likely to change since "dashboard" and "content" overlap
+    def create_content(self, path, data):
+        r = self.post('/content/' + path, data)
+        return r.text
+
+    def get_content(self, path):
+        r = self.get('/content/' + path)
+        return json.loads(r.text)
+
+    def delete_content(self):
+        r = self.delete('/content/' + path)
+        return json.loads(r.text)
 
     def dashboards(self, monitors=False):
         params = {'monitors': monitors}
@@ -89,4 +99,8 @@ class SumoLogic:
 
     def dashboard(self, dashboard_id):
         r = self.get('/dashboards/' + str(dashboard_id))
+        return json.loads(r.text)['dashboard']
+
+    def dashboard_data(self, dashboard_id):
+        r = self.get('/dashboards/' + str(dashboard_id) + '/data')
         return json.loads(r.text)['dashboardMonitorDatas']
