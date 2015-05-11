@@ -14,25 +14,33 @@ class SumoLogic:
 
     def delete(self, method, params=None):
         r = self.session.delete(self.endpoint + method, params=params)
-        if r.status_code != 200:
+        try:
+            r.raise_for_status()
+        except:
             logging.debug("Response text: %s" % r.text)
         return r
 
     def get(self, method, params=None):
         r = self.session.get(self.endpoint + method, params=params)
-        if r.status_code != 200:
+        try:
+            r.raise_for_status()
+        except:
             logging.debug("Response text: %s" % r.text)
         return r
 
     def post(self, method, params, headers=None):
         r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
-        if r.status_code != 200:
+        try:
+            r.raise_for_status()
+        except:
             logging.debug("Response text: %s" % r.text)
         return r
 
     def put(self, method, params, headers=None):
         r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
-        if r.status_code != 200:
+        try:
+            r.raise_for_status()
+        except:
             logging.debug("Response text: %s" % r.text)
         return r
 
