@@ -1,5 +1,6 @@
 from copy import copy
 import json
+import logging
 
 import requests
 
@@ -13,22 +14,26 @@ class SumoLogic:
 
     def delete(self, method, params=None):
         r = self.session.delete(self.endpoint + method, params=params)
-        r.raise_for_status()
+        if r.status_code != 200:
+            logging.debug("Response text: %s" % r.text)
         return r
 
     def get(self, method, params=None):
         r = self.session.get(self.endpoint + method, params=params)
-        r.raise_for_status()
+        if r.status_code != 200:
+            logging.debug("Response text: %s" % r.text)
         return r
 
     def post(self, method, params, headers=None):
         r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
-        r.raise_for_status()
+        if r.status_code != 200:
+            logging.debug("Response text: %s" % r.text)
         return r
 
     def put(self, method, params, headers=None):
         r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
-        r.raise_for_status()
+        if r.status_code != 200:
+            logging.debug("Response text: %s" % r.text)
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
