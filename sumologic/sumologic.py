@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-class SumoLogic:
+class SumoLogic(object):
 
     def __init__(self, accessId, accessKey, endpoint='https://api.sumologic.com/api/v1'):
         self.endpoint = endpoint
