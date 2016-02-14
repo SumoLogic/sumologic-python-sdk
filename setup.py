@@ -6,8 +6,8 @@ setup(
     packages=find_packages(),
     install_requires=['requests>=2.2.1'],
     # PyPI metadata
-    author="Yoway Buorn",
-    author_email="yoway@sumologic.com",
+    author="Yoway Buorn, Melchi Salins",
+    author_email="yoway@sumologic.com, melchisalins@icloud.com",
     description="Sumo Logic Python SDK",
     license="PSF",
     keywords="sumologic python sdk rest api log management analytics logreduce splunk security siem collector forwarder",
