@@ -2,7 +2,7 @@
 # Pass the query via stdin.
 #
 # cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
-# <fromDate> <toDate> <timeZone>
+# <endpoint> <fromDate> <toDate> <timeZone>
 #
 # Note: fromDate and toDate must be either ISO 8601 date-times or epoch
 #       milliseconds
@@ -10,7 +10,7 @@
 # Example:
 #
 # cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
-# 1408643380441 1408649380441 PST
+# https://api.us2.sumologic.com/api/v1/ 1408643380441 1408649380441 PST
 
 import json
 import sys
@@ -24,10 +24,10 @@ from sumologic import SumoLogic
 LIMIT = 42
 
 args = sys.argv
-sumo = SumoLogic(args[1], args[2])
-fromTime = args[3]
-toTime = args[4]
-timeZone = args[5]
+sumo = SumoLogic(args[1], args[2], args[3])
+fromTime = args[4]
+toTime = args[5]
+timeZone = args[6]
 
 delay = 2
 q = ' '.join(sys.stdin.readlines())
