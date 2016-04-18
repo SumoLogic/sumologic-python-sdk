@@ -1,15 +1,17 @@
 from copy import copy
 import json
 import logging
-
 import requests
+import cookielib
 
 class SumoLogic(object):
 
-    def __init__(self, accessId, accessKey, endpoint=None):
+    def __init__(self, accessId, accessKey, endpoint=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
+        cj = cookielib.FileCookieJar(cookieFile)
+        self.session.cookies = cj
         if endpoint is None:
             self.endpoint = self._get_endpoint()
         else:
