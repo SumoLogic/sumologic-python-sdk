@@ -40,6 +40,8 @@ class SumoLogic(object):
 
     def get(self, method, params=None):
         r = self.session.get(self.endpoint + method, params=params)
+        if 400 <= r.status_code < 600:
+            r.reason = r.text
         r.raise_for_status()
         return r
 
@@ -91,7 +93,7 @@ class SumoLogic(object):
         return self.put('/collectors/' + str(collector['collector']['id']), collector, headers)
 
     def delete_collector(self, collector):
-        return self.delete('/collectors/' + str(collector['collector']['id']))
+        return self.delete('/collectors/' + str(collector['id']))
 
     def sources(self, collector_id, limit=None, offset=None):
         params = {'limit': limit, 'offset': offset}
