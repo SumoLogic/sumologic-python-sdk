@@ -3,7 +3,8 @@ Sumo Logic Python SDK
 
 Community-supported Python interface to the Sumo Logic REST API.  The idea is to make it easier to
 hit the API in Python code.  Sample scripts available in the `scripts` folder.  Please submit issues
-here via Github.  Do not submit customer issues to Sumo Logic support.
+here via Github.  Do not submit customer issues to Sumo Logic support (but REST API issues are of 
+course supported).
 
 License
 =======
