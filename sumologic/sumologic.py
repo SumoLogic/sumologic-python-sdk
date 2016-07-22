@@ -106,6 +106,9 @@ class SumoLogic(object):
         r = self.get('/collectors/' + str(collector_id) + '/sources/' + str(source_id))
         return json.loads(r.text), r.headers['etag']
 
+    def create_source(self, collector_id, source):
+        return self.post('/collectors/' + str(collector_id) + '/sources', source)
+
     def update_source(self, collector_id, source, etag):
         headers = {'If-Match': etag}
         return self.put('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']), source, headers)
