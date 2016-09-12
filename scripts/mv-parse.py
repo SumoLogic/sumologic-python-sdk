@@ -1,6 +1,6 @@
 # Clobbers (unconditional replace) parse expression everywhere in a given content
 #
-# python mv-parse.py <accessId/email> <accessKey/password> <fully_qualified_folder> <from_expression> <to_expression>
+# python mv-parse.py <accessId> <accessKey> <fully_qualified_folder> <from_expression> <to_expression>
 
 #import logging
 import string

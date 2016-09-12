@@ -1,6 +1,6 @@
 # Get all dashboard data
 #
-# python get-dashboard-data.py <accessId/email> <accessKey/password>
+# python get-dashboard-data.py <accessId> <accessKey>
 
 import sys
 

@@ -1,6 +1,6 @@
 # Remove collectors where field contains some specified string
 #
-# python rm-collectors.py <accessId/email> <accessKey/password> <field> <string>
+# python rm-collectors.py <accessId> <accessKey> <field> <string>
 
 import sys
 

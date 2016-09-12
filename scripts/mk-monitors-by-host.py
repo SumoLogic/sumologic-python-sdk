@@ -1,6 +1,6 @@
 # Queries for new hosts and builds a monitor for each
 #
-# python mk-monitors-by-host.py <accessId/email> <accessKey/password> <monitor.json>
+# python mk-monitors-by-host.py <accessId> <accessKey> <monitor.json>
 #
 # where <monitor.json> describes the monitor
 #

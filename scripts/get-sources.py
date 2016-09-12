@@ -1,6 +1,6 @@
 # Get collectors where field contains some specified string
 #
-# python get-collectors.py <accessId/email> <accessKey/password> <field> <string>
+# python get-collectors.py <accessId> <accessKey> <field> <string>
 
 import sys
 
