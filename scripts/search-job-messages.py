@@ -1,7 +1,7 @@
 # Submits search job, waits for completion, then prints and emails _messages_
 # (as opposed to records).  Pass the query via stdin.
 #
-# cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
+# cat query.sumoql | python search-job.py <accessId> <accessKey> \
 # <fromDate> <toDate> <timeZone>
 #
 # Note: fromDate and toDate must be either ISO 8601 date-times or epoch
@@ -9,7 +9,7 @@
 #
 # Example:
 #
-# cat query.sumoql | python search-job.py <accessId/email> <accessKey/password> \
+# cat query.sumoql | python search-job.py <accessId> <accessKey> \
 # 1408643380441 1408649380441 PST
 
 import json

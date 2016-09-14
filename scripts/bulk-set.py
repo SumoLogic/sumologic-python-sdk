@@ -1,6 +1,6 @@
 # Sets an attribute across all collectors and sources in a given account.
 #
-# python bulk-set.py <accessId/email> <accessKey/password> <attribute> <value>
+# python bulk-set.py <accessId> <accessKey> <attribute> <value>
 
 import pprint
 import sys

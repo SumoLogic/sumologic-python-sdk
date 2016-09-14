@@ -1,6 +1,6 @@
 # Emails you a per-collector per-source usage report
 #
-# python usage-report.py <accessId/email> <accessKey/password> <orgId> <fromTime> <toTime> <timezone> <timeslice> <email>
+# python usage-report.py <accessId> <accessKey> <orgId> <fromTime> <toTime> <timezone> <timeslice> <email>
 #
 # TODO per-source
 # TODO log hook

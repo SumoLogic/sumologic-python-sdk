@@ -1,6 +1,6 @@
 # Search-replaces monitor time windows.
 #
-# python mv-monitor-times.py <accessId/email> <accessKey/password> <oldWindow> <newWindow>
+# python mv-monitor-times.py <accessId> <accessKey> <oldWindow> <newWindow>
 
 import sys
 

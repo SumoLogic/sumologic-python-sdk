@@ -1,6 +1,6 @@
 # Deletes all sources (not collectors) in a given category.
 #
-# python rm-src-by-cat.py <accessId/email> <accessKey/password> <category>
+# python rm-src-by-cat.py <accessId> <accessKey> <category>
 
 import sys
 
