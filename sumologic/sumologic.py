@@ -2,7 +2,11 @@ from copy import copy
 import json
 import logging
 import requests
-import cookielib
+
+try:
+    import cookielib
+except ImportError:
+    import http.cookiejar as cookielib
 
 class SumoLogic(object):
 
