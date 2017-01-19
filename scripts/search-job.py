@@ -45,6 +45,6 @@ print status['state']
 
 if status['state'] == 'DONE GATHERING RESULTS':
     count = status['recordCount']
-    limit = count if count < LIMIT else LIMIT # compensate bad limit check
+    limit = count if count < LIMIT and count != 0 else LIMIT # compensate bad limit check
     r = sumo.search_job_records(sj, limit=limit)
     print r
