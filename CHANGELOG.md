@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.7] - 2017-01-31
+- Merged PR18,20
+
 ## [0.1.6] - 2017-01-05
 - Fixed cookielib incompatiblity with python3 via PR17
 
