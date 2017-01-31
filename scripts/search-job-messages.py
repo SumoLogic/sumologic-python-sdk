@@ -26,7 +26,7 @@ fromTime = args[3]
 toTime = args[4]
 timeZone = args[5]
 
-delay = 2
+delay = 5
 q = ' '.join(sys.stdin.readlines())
 sj = sumo.search_job(q, fromTime, toTime, timeZone)
 
@@ -35,7 +35,6 @@ while status['state'] != 'DONE GATHERING RESULTS':
 	if status['state'] == 'CANCELLED':
 		break
 	time.sleep(delay)
-	delay *= 2
 	status = sumo.search_job_status(sj)
 
 print status['state']
