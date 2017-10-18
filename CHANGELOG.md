@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 
 ## [Unreleased]
 ### Added
-TBD
+- PR25 add method for querying metrics
 
 ### Changed
 TBD
