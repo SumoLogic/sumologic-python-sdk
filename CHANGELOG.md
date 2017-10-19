@@ -1,6 +1,12 @@
-# Change Log
-All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+# CHANGELOG for sumologic-python-sdk 
+This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
+
+## [Unreleased]
+### Added
+TBD
+
+### Changed
+TBD
 
 ## [0.1.7] - 2017-01-31
 - Merged PR18,20
