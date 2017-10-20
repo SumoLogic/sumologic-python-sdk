@@ -85,6 +85,9 @@ class SumoLogic(object):
         r = self.get('/search/jobs/' + str(search_job['id']) + '/records', params)
         return json.loads(r.text)
 
+    def delete_search_job(self, search_job):
+        return self.delete('/search/jobs/' + str(search_job['id']))
+
     def collectors(self, limit=None, offset=None):
         params = {'limit': limit, 'offset': offset}
         r = self.get('/collectors', params)
