@@ -4,9 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 ## [Unreleased]
 ### Added
 - Added search job deletion support via PR24
+- Added support for metrics queries via PR25
 
 ### Changed
-TBD
+- Fixed import issue for py27/py36 users via PR22
 
 ## [0.1.7] - 2017-01-31
 - Merged PR18,20
