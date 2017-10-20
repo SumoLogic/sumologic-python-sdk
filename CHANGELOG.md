@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 
 ## [Unreleased]
 ### Added
-- PR25 add method for querying metrics
+- Added search job deletion support via PR24
 
 ### Changed
 TBD
