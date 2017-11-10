@@ -4,7 +4,7 @@ setup(
     name="sumologic-sdk",
     version="0.1.7",
     packages=find_packages(),
-    install_requires=['requests>=2.2.1'],
+    install_requires=['requests>=2.2.1', 'aiohttp>=2.3.1'],
     # PyPI metadata
     author="Yoway Buorn, Melchi Salins",
     author_email="it@sumologic.com, melchisalins@icloud.com",
