@@ -123,18 +123,6 @@ class SumoLogic(object):
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
-    def create_content(self, path, data):
-        r = self.post('/content/' + path, data)
-        return r.text
-
-    def get_content(self, path):
-        r = self.get('/content/' + path)
-        return json.loads(r.text)
-
-    def delete_content(self):
-        r = self.delete('/content/' + path)
-        return json.loads(r.text)
-
     def dashboards(self, monitors=False):
         params = {'monitors': monitors}
         r = self.get('/dashboards', params)
@@ -147,7 +135,7 @@ class SumoLogic(object):
     def dashboard_data(self, dashboard_id):
         r = self.get('/dashboards/' + str(dashboard_id) + '/data')
         return json.loads(r.text)['dashboardMonitorDatas']
-        
+
     def search_metrics(self, query, fromTime=None, toTime=None, requestedDataPoints=600, maxDataPoints=800):
         '''Perform a single Sumo metrics query'''
         def millisectimestamp(ts):
@@ -158,10 +146,10 @@ class SumoLogic(object):
                 ts = ts*10**(12-len(str(ts)))
             return int(ts)
 
-        params = {'query': [{"query":query, "rowId":"A"}], 
-                  'startTime': millisectimestamp(fromTime), 
-                  'endTime': millisectimestamp(toTime), 
+        params = {'query': [{"query":query, "rowId":"A"}],
+                  'startTime': millisectimestamp(fromTime),
+                  'endTime': millisectimestamp(toTime),
                   'requestedDataPoints': requestedDataPoints,
                   'maxDataPoints': maxDataPoints}
-        r = self.post('/metrics/results', params) 
+        r = self.post('/metrics/results', params)
         return json.loads(r.text)
