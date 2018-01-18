@@ -1,4 +1,4 @@
-# CHANGELOG for sumologic-python-sdk 
+# CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
@@ -8,6 +8,9 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 
 ### Changed
 - Fixed import issue for py27/py36 users via PR22
+
+### Breaking Changes
+- Removed content create,delete and get methods.
 
 ## [0.1.7] - 2017-01-31
 - Merged PR18,20
