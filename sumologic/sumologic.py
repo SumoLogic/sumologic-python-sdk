@@ -56,6 +56,12 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    def post_with_file(self, method, filename, headers=None):
+        contents = open(filename, 'rb').read()
+        r = self.session.post(self.endpoint + method, data=contents, headers=headers)
+        r.raise_for_status()
+        return r
+
     def put(self, method, params, headers=None):
         r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
         r.raise_for_status()
@@ -96,6 +102,9 @@ class SumoLogic(object):
     def collector(self, collector_id):
         r = self.get('/collectors/' + str(collector_id))
         return json.loads(r.text), r.headers['etag']
+
+    def create_collector(self, collector_file, headers=None):
+        return self.post_with_file('/collectors', collector_file, headers)
 
     def update_collector(self, collector, etag):
         headers = {'If-Match': etag}
