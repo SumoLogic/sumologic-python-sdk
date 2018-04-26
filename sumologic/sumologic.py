@@ -52,13 +52,7 @@ class SumoLogic(object):
         return r
 
     def post(self, method, params, headers=None):
-        r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
-        r.raise_for_status()
-        return r
-
-    def post_with_file(self, method, filename, headers=None):
-        contents = open(filename, 'rb').read()
-        r = self.session.post(self.endpoint + method, data=contents, headers=headers)
+        r = self.session.post(self.endpoint + method, data=params, headers=headers)
         r.raise_for_status()
         return r
 
@@ -74,7 +68,7 @@ class SumoLogic(object):
 
     def search_job(self, query, fromTime=None, toTime=None, timeZone='UTC'):
         params = {'query': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone}
-        r = self.post('/search/jobs', params)
+        r = self.post('/search/jobs', json.dumps(params))
         return json.loads(r.text)
 
     def search_job_status(self, search_job):
@@ -103,8 +97,8 @@ class SumoLogic(object):
         r = self.get('/collectors/' + str(collector_id))
         return json.loads(r.text), r.headers['etag']
 
-    def create_collector(self, collector_file, headers=None):
-        return self.post_with_file('/collectors', collector_file, headers)
+    def create_collector(self, collector, headers=None):
+        return self.post('/collectors', collector, headers)
 
     def update_collector(self, collector, etag):
         headers = {'If-Match': etag}
@@ -123,7 +117,7 @@ class SumoLogic(object):
         return json.loads(r.text), r.headers['etag']
 
     def create_source(self, collector_id, source):
-        return self.post('/collectors/' + str(collector_id) + '/sources', source)
+        return self.post('/collectors/' + str(collector_id) + '/sources', json.dumps(source))
 
     def update_source(self, collector_id, source, etag):
         headers = {'If-Match': etag}
@@ -131,6 +125,18 @@ class SumoLogic(object):
 
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
+
+    def create_content(self, path, data):
+        r = self.post('/content/' + path, json.dumps(data))
+        return r.text
+
+    def get_content(self, path):
+        r = self.get('/content/' + path)
+        return json.loads(r.text)
+
+    def delete_content(self):
+        r = self.delete('/content/' + path)
+        return json.loads(r.text)
 
     def dashboards(self, monitors=False):
         params = {'monitors': monitors}
@@ -160,5 +166,5 @@ class SumoLogic(object):
                   'endTime': millisectimestamp(toTime),
                   'requestedDataPoints': requestedDataPoints,
                   'maxDataPoints': maxDataPoints}
-        r = self.post('/metrics/results', params)
+        r = self.post('/metrics/results', json.dumps(params))
         return json.loads(r.text)
