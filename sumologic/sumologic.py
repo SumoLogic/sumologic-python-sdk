@@ -126,18 +126,6 @@ class SumoLogic(object):
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
-    def create_content(self, path, data):
-        r = self.post('/content/' + path, data)
-        return r.text
-
-    def get_content(self, path):
-        r = self.get('/content/' + path)
-        return json.loads(r.text)
-
-    def delete_content(self):
-        r = self.delete('/content/' + path)
-        return json.loads(r.text)
-
     def dashboards(self, monitors=False):
         params = {'monitors': monitors}
         r = self.get('/dashboards', params)
