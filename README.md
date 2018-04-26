@@ -6,6 +6,10 @@ hit the API in Python code.  Sample scripts available in the `scripts` folder.  
 here via Github.  Do not submit customer issues to Sumo Logic support (but REST API issues are of 
 course supported).
 
+| TLS Deprecation Notice |
+| --- |
+| In keeping with industry standard security best practices, as of May 31, 2018, the Sumo Logic service will only support TLS version 1.2 going forward. Verify that all connections to Sumo Logic endpoints are made from software that supports TLS 1.2. |
+
 License
 =======
 
