@@ -52,12 +52,12 @@ class SumoLogic(object):
         return r
 
     def post(self, method, params, headers=None):
-        r = self.session.post(self.endpoint + method, data=params, headers=headers)
+        r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
         r.raise_for_status()
         return r
 
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
+        r = self.session.put(self.endpoint + method, data=(params), headers=headers)
         r.raise_for_status()
         return r
 
@@ -68,7 +68,7 @@ class SumoLogic(object):
 
     def search_job(self, query, fromTime=None, toTime=None, timeZone='UTC'):
         params = {'query': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone}
-        r = self.post('/search/jobs', json.dumps(params))
+        r = self.post('/search/jobs', params)
         return json.loads(r.text)
 
     def search_job_status(self, search_job):
@@ -117,7 +117,7 @@ class SumoLogic(object):
         return json.loads(r.text), r.headers['etag']
 
     def create_source(self, collector_id, source):
-        return self.post('/collectors/' + str(collector_id) + '/sources', json.dumps(source))
+        return self.post('/collectors/' + str(collector_id) + '/sources', source)
 
     def update_source(self, collector_id, source, etag):
         headers = {'If-Match': etag}
@@ -127,7 +127,7 @@ class SumoLogic(object):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
     def create_content(self, path, data):
-        r = self.post('/content/' + path, json.dumps(data))
+        r = self.post('/content/' + path, data)
         return r.text
 
     def get_content(self, path):
@@ -166,5 +166,5 @@ class SumoLogic(object):
                   'endTime': millisectimestamp(toTime),
                   'requestedDataPoints': requestedDataPoints,
                   'maxDataPoints': maxDataPoints}
-        r = self.post('/metrics/results', json.dumps(params))
+        r = self.post('/metrics/results', params)
         return json.loads(r.text)
