@@ -57,8 +57,8 @@ class SumoLogic(object):
         return r
 
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
-        r.raise_for_status()
+        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+        r.raise_for_status() 
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
@@ -96,6 +96,9 @@ class SumoLogic(object):
     def collector(self, collector_id):
         r = self.get('/collectors/' + str(collector_id))
         return json.loads(r.text), r.headers['etag']
+
+    def create_collector(self, collector, headers=None):
+        return self.post('/collectors', collector, headers)
 
     def update_collector(self, collector, etag):
         headers = {'If-Match': etag}
