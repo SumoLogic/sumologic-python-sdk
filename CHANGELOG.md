@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 
 ### Changed
 - Fixed import issue for py27/py36 users via PR22
+- Improved exception messages for delete, post, put via PR31
 
 ### Breaking Changes
 - Removed content create,delete and get methods.
