@@ -10,12 +10,12 @@ except ImportError:
 
 class SumoLogic(object):
 
-    def __init__(self, accessId, accessKey, endpoint=None, cookieFile='cookies.txt'):
+    def __init__(self, access_id, access_key, endpoint=None, cookie_file='cookies.txt'):
         self.session = requests.Session()
-        self.session.auth = (accessId, accessKey)
+        self.session.auth = (access_id, access_key)
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
-        cj = cookielib.FileCookieJar(cookieFile)
-        self.session.cookies = cj
+        cookie_jar = cookielib.FileCookieJar(cookie_file)
+        self.session.cookies = cookie_jar
         if endpoint is None:
             self.endpoint = self._get_endpoint()
         else:
@@ -53,11 +53,15 @@ class SumoLogic(object):
 
     def post(self, method, params, headers=None):
         r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
+        if 400 <= r.status_code < 600:
+            r.reason = r.text
         r.raise_for_status()
         return r
 
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
+        if 400 <= r.status_code < 600:
+            r.reason = r.text
         r.raise_for_status() 
         return r
 
