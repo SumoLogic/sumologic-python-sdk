@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 ### Added
 - Added search job deletion support via PR24
 - Added support for metrics queries via PR25
+- Added new parameter byReceiptTime to create search job api
 
 ### Changed
 - Fixed import issue for py27/py36 users via PR22

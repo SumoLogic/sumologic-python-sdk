@@ -2,7 +2,7 @@
 # (as opposed to records).  Pass the query via stdin.
 #
 # cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# <fromDate> <toDate> <timeZone>
+# <fromDate> <toDate> <timeZone> <byReceiptTime>
 #
 # Note: fromDate and toDate must be either ISO 8601 date-times or epoch
 #       milliseconds
@@ -10,7 +10,7 @@
 # Example:
 #
 # cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# 1408643380441 1408649380441 PST
+# 1408643380441 1408649380441 PST false
 
 import json
 import sys
@@ -25,10 +25,11 @@ sumo = SumoLogic(args[1], args[2])
 fromTime = args[3]
 toTime = args[4]
 timeZone = args[5]
+byReceiptTime = args[6]
 
 delay = 5
 q = ' '.join(sys.stdin.readlines())
-sj = sumo.search_job(q, fromTime, toTime, timeZone)
+sj = sumo.search_job(q, fromTime, toTime, timeZone, byReceiptTime)
 
 status = sumo.search_job_status(sj)
 while status['state'] != 'DONE GATHERING RESULTS':
