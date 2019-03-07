@@ -34,3 +34,12 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Data Folders
+data/
+
+# Pycharm
+.idea/
+
+# Mac
+.DS_Store

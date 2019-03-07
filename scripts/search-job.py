@@ -25,26 +25,27 @@ LIMIT = 42
 
 args = sys.argv
 sumo = SumoLogic(args[1], args[2], args[3])
-fromTime = args[4]
-toTime = args[5]
-timeZone = args[6]
-byReceiptTime = args[7]
+fromTime = int(args[4])
+toTime = int(args[5])
+# timeZone = args[6]
+# byReceiptTime = args[7]
 
 delay = 5
 q = ' '.join(sys.stdin.readlines())
-sj = sumo.search_job(q, fromTime, toTime, timeZone, byReceiptTime)
-
-status = sumo.search_job_status(sj)
-while status['state'] != 'DONE GATHERING RESULTS':
-    if status['state'] == 'CANCELLED':
-        break
-    time.sleep(delay)
-    status = sumo.search_job_status(sj)
-
-print status['state']
-
-if status['state'] == 'DONE GATHERING RESULTS':
-    count = status['recordCount']
-    limit = count if count < LIMIT and count != 0 else LIMIT # compensate bad limit check
-    r = sumo.search_job_records(sj, limit=limit)
-    print r
+# sj = sumo.search_job(q, fromTime, toTime, timeZone, byReceiptTime)
+sj = sumo.search_metrics(q, fromTime, toTime)
+print(sj)
+# status = sumo.search_job_status(sj)
+# while status['state'] != 'DONE GATHERING RESULTS':
+#     if status['state'] == 'CANCELLED':
+#         break
+#     time.sleep(delay)
+#     status = sumo.search_job_status(sj)
+#
+# print(status['state'])
+#
+# if status['state'] == 'DONE GATHERING RESULTS':
+#     count = status['recordCount']
+#     limit = count if count < LIMIT and count != 0 else LIMIT # compensate bad limit check
+#     r = sumo.search_job_records(sj, limit=limit)
+#     print(r)

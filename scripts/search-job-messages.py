@@ -38,10 +38,10 @@ while status['state'] != 'DONE GATHERING RESULTS':
 	time.sleep(delay)
 	status = sumo.search_job_status(sj)
 
-print status['state']
+print(status['state'])
 
 if status['state'] == 'DONE GATHERING RESULTS':
     count = status['messageCount']
     limit = count if count < LIMIT and count != 0 else LIMIT # compensate bad limit check
     r = sumo.search_job_messages(sj, limit=limit)
-    print r
+    print(r)
