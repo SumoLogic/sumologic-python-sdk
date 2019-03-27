@@ -14,4 +14,4 @@ cs = sumo.collectors()
 for c in cs:
 	if field in c and string in c[field]:
 		cv, _ = sumo.collector(c['id'])
-		print sumo.delete_collector(cv).text
+		print(sumo.delete_collector(cv).text)

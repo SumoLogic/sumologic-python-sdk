@@ -13,4 +13,4 @@ cs = sumo.collectors()
 
 for c in cs:
 	if field in c and string in c[field]:
-		print sumo.sources(c['id'])
+		print(sumo.sources(c['id']))

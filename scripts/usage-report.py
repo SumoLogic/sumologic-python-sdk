@@ -41,7 +41,7 @@ q = q.replace('\n', ' ')
 
 r = sumo.search_and_wait(q, fromTime, toTime, timezone)
 
-print r
+print(r)
 
 q = r"""
 (_sourceCategory=receiver or _sourceCategory=cloudcollector)
@@ -61,7 +61,7 @@ q = q.replace('\n', ' ')
 
 r = sumo.search_and_wait(q, fromTime, toTime, timezone)
 
-print r
+print(r)
 
 msg = MIMEText(json.dumps(r))
 msg['From'] = fromEmail

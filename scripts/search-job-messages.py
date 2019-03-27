@@ -33,15 +33,15 @@ sj = sumo.search_job(q, fromTime, toTime, timeZone, byReceiptTime)
 
 status = sumo.search_job_status(sj)
 while status['state'] != 'DONE GATHERING RESULTS':
-	if status['state'] == 'CANCELLED':
-		break
-	time.sleep(delay)
-	status = sumo.search_job_status(sj)
+    if status['state'] == 'CANCELLED':
+        break
+    time.sleep(delay)
+    status = sumo.search_job_status(sj)
 
-print status['state']
+print(status['state'])
 
 if status['state'] == 'DONE GATHERING RESULTS':
     count = status['messageCount']
     limit = count if count < LIMIT and count != 0 else LIMIT # compensate bad limit check
     r = sumo.search_job_messages(sj, limit=limit)
-    print r
+    print(r)

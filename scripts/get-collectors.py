@@ -13,4 +13,4 @@ cs = sumo.collectors()
 
 for c in cs:
 	if field in c and string in c[field]:
-		print c
+		print(c)
