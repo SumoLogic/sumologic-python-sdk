@@ -10,7 +10,7 @@
 # Example:
 #
 # cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# https://api.us2.sumologic.com/api/v1/ 1408643380441 1408649380441 PST false
+# 1408643380441 1408649380441 PST false
 
 import json
 import sys
@@ -20,15 +20,12 @@ from sumologic import SumoLogic
 
 LIMIT = 42
 
-
-
-
 args = sys.argv
-sumo = SumoLogic(args[1], args[2], args[3])
-fromTime = args[4]
-toTime = args[5]
-timeZone = args[6]
-byReceiptTime = args[7]
+sumo = SumoLogic(args[1], args[2])
+fromTime = args[3]
+toTime = args[4]
+timeZone = args[5]
+byReceiptTime = args[6]
 
 delay = 5
 q = ' '.join(sys.stdin.readlines())
