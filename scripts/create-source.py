@@ -14,7 +14,7 @@ source = json.loads(args[5])
 cs = sumo.collectors()
 
 for c in cs:
-        print c
-        print field, string
+        print(c)
+        print(field, string)
 	if field in c and string in c[field]:
-		print sumo.create_source(c['id'],source)
+		print(sumo.create_source(c['id'],source))

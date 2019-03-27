@@ -9,7 +9,7 @@ from sumologic import SumoLogic
 args = sys.argv
 sumo = SumoLogic(args[1], args[2], args[3])
 ds = sumo.dashboards(True)
-print ds
+print(ds)
 
 #for d in ds:
-#	print d
+#	print(d)

@@ -1,5 +1,4 @@
-# Submits search job, waits for completion, then prints and emails _messages_
-# (as opposed to records).  Pass the query via stdin.
+# Submits search job, waits for completion, then prints stats about the searchjob  Pass the query via stdin.
 #
 # cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
 # <fromDate> <toDate> <timeZone> <byReceiptTime>
@@ -10,7 +9,7 @@
 # Example:
 #
 # cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# https://api.us2.sumologic.com/api/v1/ 1408643380441 1408649380441 PST false
+# https://api.us2.sumologic.com/api/v1/ 1553630969000 1408649380441 PST false
 
 import json
 import sys
@@ -31,6 +30,7 @@ timeZone = args[6]
 byReceiptTime = args[7]
 
 delay = 5
+duration = 0
 q = ' '.join(sys.stdin.readlines())
 sj = sumo.search_job(q, fromTime, toTime, timeZone, byReceiptTime)
 
@@ -40,6 +40,8 @@ while status['state'] != 'DONE GATHERING RESULTS':
         break
     time.sleep(delay)
     status = sumo.search_job_status(sj)
+    duration += delay
+    print("STILL GATHERING RESULTS ({})".format(duration))
 
 print(status['state'])
 

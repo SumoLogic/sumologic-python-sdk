@@ -16,4 +16,4 @@ for c in cs:
 	for s in ss:
 		if s['category'] == cat:
 			sv, _ = sumo.source(c['id'], s['id'])
-			print sumo.delete_source(c['id'], sv).text
+			print(sumo.delete_source(c['id'], sv).text)

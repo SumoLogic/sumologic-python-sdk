@@ -32,14 +32,14 @@ cs = sumo.contents(path)['children']
 
 for c in cs:
 	if c['type'] == 'Search':
-		print 'before: ' + c['searchQuery'] + '\n'
+		print('before: ' + c['searchQuery'] + '\n')
 		c['searchQuery'] = string.replace(c['searchQuery'], from_expr, to_expr, 1)
-		print 'after: ' + c['searchQuery'] + '\n'
+		print('after: ' + c['searchQuery'] + '\n')
 	elif c['type'] == 'Dashboard':
 		for col in c['columns']:
 			for m in col['monitors']:
-				print 'before: ' + m['searchQuery'] + '\n'
+				print('before: ' + m['searchQuery'] + '\n')
 				m['searchQuery'] = string.replace(m['searchQuery'], from_expr, to_expr, 1)
-				print 'after: ' + m['searchQuery'] + '\n'
-print sumo.create_contents(string.strip(path, '/').split('/')[0], cs)
+				print('after: ' + m['searchQuery'] + '\n')
+print(sumo.create_contents(string.strip(path, '/').split('/')[0], cs))
 
