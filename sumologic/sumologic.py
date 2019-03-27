@@ -111,7 +111,7 @@ class SumoLogic(object):
         return self.put('/collectors/' + str(collector['collector']['id']), collector, headers)
 
     def delete_collector(self, collector):
-        return self.delete('/collectors/' + str(collector['id']))
+        return self.delete('/collectors/' + str(collector['collector']['id']))
 
     def sources(self, collector_id, limit=None, offset=None):
         params = {'limit': limit, 'offset': offset}
