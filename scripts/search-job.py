@@ -10,7 +10,7 @@
 # Example:
 #
 # cat query.sumoql | python search-job.py <accessId> <accessKey> \
-# https://api.us2.sumologic.com/api/v1/ 1408643380441 1408649380441 PST false
+# https://api.us2.sumologic.com/api/v1 1408643380441 1408649380441 PST false
 
 import json
 import sys
