@@ -1,0 +1,23 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+bandit = "*"   # https://github.com/PyCQA/bandit
+better_exceptions = "*"
+black = "*"
+pipenv = {path = ".", editable = true, extras = ["test"]}
+flake8 = ">=3.3.0,<4"
+pre-commit = "*"  # https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
+pytest = "*"
+requests = "*"
+
+[packages]
+requests = "*"
+
+[requires]
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true
