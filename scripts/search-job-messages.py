@@ -1,16 +1,14 @@
 # Submits search job, waits for completion, then prints and emails _messages_
 # (as opposed to records).  Pass the query via stdin.
 #
-# cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# <fromDate> <toDate> <timeZone> <byReceiptTime>
+# cat query.sumoql | python search-job-messages.py <accessId> <accessKey> <fromDate> <toDate> <timeZone> <byReceiptTime>
 #
 # Note: fromDate and toDate must be either ISO 8601 date-times or epoch
 #       milliseconds
 #
 # Example:
 #
-# cat query.sumoql | python search-job-messages.py <accessId> <accessKey> \
-# 1408643380441 1408649380441 PST false
+# cat query.sumoql | python search-job-messages.py <accessId> <accessKey> 1408643380441 1408649380441 PST false
 
 import json
 import sys
@@ -18,14 +16,14 @@ import time
 
 from sumologic import SumoLogic
 
-LIMIT = 42
+LIMIT = 1000000
 
 args = sys.argv
-sumo = SumoLogic(args[1], args[2])
-fromTime = args[3]
-toTime = args[4]
-timeZone = args[5]
-byReceiptTime = args[6]
+sumo = SumoLogic(args[1], args[2], args[3])
+fromTime = args[4]
+toTime = args[5]
+timeZone = args[6]
+byReceiptTime = args[7]
 
 delay = 5
 q = ' '.join(sys.stdin.readlines())
