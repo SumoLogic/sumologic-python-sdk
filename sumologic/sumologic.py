@@ -68,10 +68,10 @@ class SumoLogic(object):
 
     @backoff
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
-        r.raise_for_status() 
+        r.raise_for_status()
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
