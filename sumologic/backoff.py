@@ -4,7 +4,7 @@ import time
 
 logger = logging.getLogger('sumologic.backoff')
 
-MAX_TRIES = 1
+MAX_TRIES = 8
 
 def backoff(func):
     def limited(*args, **kwargs):
