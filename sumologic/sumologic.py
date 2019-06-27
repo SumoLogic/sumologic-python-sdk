@@ -14,8 +14,8 @@ class SumoLogic(object):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
-        if caBundle is NOT None:
-            self.session.verify(caBundle)
+        if caBundle is not None:
+            self.session.verify = caBundle
         cj = cookielib.FileCookieJar(cookieFile)
         self.session.cookies = cj
         if endpoint is None:
