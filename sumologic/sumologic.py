@@ -22,7 +22,7 @@ class SumoLogic(object):
             self.endpoint = self._get_endpoint()
         else:
             self.endpoint = endpoint
-        if endpoint[-1:] == "/":
+        if self.endpoint[-1:] == "/":
           raise Exception("Endpoint should not end with a slash character")
 
     def _get_endpoint(self):
