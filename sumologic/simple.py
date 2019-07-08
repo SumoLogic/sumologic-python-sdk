@@ -89,7 +89,7 @@ class SumoLogicSimple:
         self.client = sumo
 
     @staticmethod
-    def _getTime(t: Union[datetime, timedelta]) -> datetime:
+    def _getTime(t: Union[datetime, timedelta, None]) -> datetime:
         if isinstance(t, datetime):
             return t
         elif t is None:
