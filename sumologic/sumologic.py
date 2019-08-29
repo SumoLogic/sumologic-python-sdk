@@ -8,6 +8,7 @@ try:
 except ImportError:
     import http.cookiejar as cookielib
 
+
 class SumoLogic(object):
 
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
@@ -23,7 +24,7 @@ class SumoLogic(object):
         else:
             self.endpoint = endpoint
         if self.endpoint[-1:] == "/":
-          raise Exception("Endpoint should not end with a slash character")
+            raise Exception("Endpoint should not end with a slash character")
 
     def _get_endpoint(self):
         """
@@ -40,7 +41,11 @@ class SumoLogic(object):
         """
         self.endpoint = 'https://api.sumologic.com/api/v1'
         self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')  # Dummy call to get endpoint
-        endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
+        if self.response.status_code == 401:
+            self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')
+            endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
+        else:
+            endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
         return endpoint
 
     def delete(self, method, params=None):
@@ -65,10 +70,10 @@ class SumoLogic(object):
         return r
 
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
-        r.raise_for_status() 
+        r.raise_for_status()
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
@@ -154,12 +159,12 @@ class SumoLogic(object):
         def millisectimestamp(ts):
             '''Convert UNIX timestamp to milliseconds'''
             if ts > 10**12:
-                ts = ts/(10**(len(str(ts))-13))
+                ts = ts / (10**(len(str(ts)) - 13))
             else:
-                ts = ts*10**(12-len(str(ts)))
+                ts = ts * 10**(12 - len(str(ts)))
             return int(ts)
 
-        params = {'query': [{"query":query, "rowId":"A"}],
+        params = {'query': [{"query": query, "rowId": "A"}],
                   'startTime': millisectimestamp(fromTime),
                   'endTime': millisectimestamp(toTime),
                   'requestedDataPoints': requestedDataPoints,
