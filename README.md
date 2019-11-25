@@ -10,6 +10,13 @@ course supported).
 
 Sumo Logic only accepts connections from clients using TLS version 1.2 or greater. To utilize the content of this repo, ensure that it's running in an execution environment that is configured to use TLS 1.2 or greater.
 
+Installing
+==========
+
+```
+pip install sumologic-sdk
+```
+
 How to use / examples
 =====================
 
