@@ -166,3 +166,7 @@ class SumoLogic(object):
                   'maxDataPoints': maxDataPoints}
         r = self.post('/metrics/results', params)
         return json.loads(r.text)
+
+    def get_available_builds(self):
+        r = self.get('/collectors/upgrades/targets')
+        return json.loads(r.text)['targets']
