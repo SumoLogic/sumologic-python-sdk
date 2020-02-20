@@ -1,0 +1,7 @@
+include requirements.txt
+include LICENSE
+include VERSION
+include README
+include sumologic *.py
+recursive-exclude scripts *
+
