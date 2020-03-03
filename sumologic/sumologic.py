@@ -6,14 +6,12 @@ try:
 except ImportError:
     import http.cookiejar as cookielib
 
-DEFAULT_VERSION = 'v1'
-
-
 class SumoLogic(object):
 
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
+        self.DEFAULT_VERSION = 'v1'
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
         if caBundle is not None:
             self.session.verify = caBundle
@@ -31,9 +29,11 @@ class SumoLogic(object):
         SumoLogic REST API endpoint changes based on the geo location of the client.
         For example, If the client geolocation is Australia then the REST end point is
         https://api.au.sumologic.com/api/v1
+
         When the default REST endpoint (https://api.sumologic.com/api/v1) is used the server
         responds with a 401 and causes the SumoLogic class instantiation to fail and this very
         unhelpful message is shown 'Full authentication is required to access this resource'
+
         This method makes a request to the default REST endpoint and resolves the 401 to learn
         the right endpoint
         """
@@ -46,7 +46,8 @@ class SumoLogic(object):
     def get_versioned_endpoint(self, version):
         return self.endpoint+'/%s' % version
 
-    def delete(self, method, params=None, version=DEFAULT_VERSION):
+    def delete(self, method, params=None, version=None):
+        version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.delete(endpoint + method, params=params)
         if 400 <= r.status_code < 600:
@@ -54,7 +55,8 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
-    def get(self, method, params=None, version=DEFAULT_VERSION):
+    def get(self, method, params=None, version=None):
+        version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.get(endpoint + method, params=params)
         if 400 <= r.status_code < 600:
@@ -62,7 +64,8 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
-    def post(self, method, params, headers=None, version=DEFAULT_VERSION):
+    def post(self, method, params, headers=None, version=None):
+        version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.post(endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
@@ -70,7 +73,8 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
-    def put(self, method, params, headers=None, version=DEFAULT_VERSION):
+    def put(self, method, params, headers=None, version=None):
+        version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.put(endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
@@ -200,3 +204,17 @@ class SumoLogic(object):
     def get_personal_folder(self):
         return self.get('/content/folders/personal', version='v2')
 
+    def import_content(self, folder_id, content, is_overwrite="false"):
+        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content, version='v2')
+
+    def check_import_status(self, folder_id, job_id):
+        return self.get('/content/folders/%s/import/%s/status' % (folder_id, job_id), version='v2')
+
+    def get_folder(self, folder_id):
+        return self.get('/content/folders/%s' % folder_id, version='v2')
+
+    def install_app(self, app_id, content):
+        return self.post('/apps/%s/install' % (app_id), params=content)
+
+    def check_app_install_status(self, job_id):
+        return self.get('/apps/install/%s/status' % job_id)
