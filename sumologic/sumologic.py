@@ -2,6 +2,7 @@ from copy import copy
 import json
 import logging
 import requests
+from .backoff import backoff
 
 try:
     import cookielib
@@ -43,6 +44,7 @@ class SumoLogic(object):
         endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
         return endpoint
 
+    @backoff
     def delete(self, method, params=None):
         r = self.session.delete(self.endpoint + method, params=params)
         if 400 <= r.status_code < 600:
@@ -50,6 +52,7 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    @backoff
     def get(self, method, params=None):
         r = self.session.get(self.endpoint + method, params=params)
         if 400 <= r.status_code < 600:
@@ -57,6 +60,7 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    @backoff
     def post(self, method, params, headers=None):
         r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
@@ -64,11 +68,12 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    @backoff
     def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
-        r.raise_for_status() 
+        r.raise_for_status()
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
