@@ -1,6 +1,4 @@
-from copy import copy
 import json
-import logging
 import requests
 
 try:
@@ -13,6 +11,7 @@ class SumoLogic(object):
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
+        self.DEFAULT_VERSION = 'v1'
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
         if caBundle is not None:
             self.session.verify = caBundle
@@ -23,7 +22,7 @@ class SumoLogic(object):
         else:
             self.endpoint = endpoint
         if self.endpoint[-1:] == "/":
-          raise Exception("Endpoint should not end with a slash character")
+            raise Exception("Endpoint should not end with a slash character")
 
     def _get_endpoint(self):
         """
@@ -38,37 +37,49 @@ class SumoLogic(object):
         This method makes a request to the default REST endpoint and resolves the 401 to learn
         the right endpoint
         """
-        self.endpoint = 'https://api.sumologic.com/api/v1'
+        self.endpoint = 'https://api.sumologic.com/api'
         self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')  # Dummy call to get endpoint
-        endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
+        endpoint = self.response.url.replace('/v1/collectors', '')  # dirty hack to sanitise URI and retain domain
+        print("SDK Endpoint", endpoint)
         return endpoint
 
-    def delete(self, method, params=None):
-        r = self.session.delete(self.endpoint + method, params=params)
+    def get_versioned_endpoint(self, version):
+        return self.endpoint+'/%s' % version
+
+    def delete(self, method, params=None, version=None):
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        r = self.session.delete(endpoint + method, params=params)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
         return r
 
-    def get(self, method, params=None):
-        r = self.session.get(self.endpoint + method, params=params)
+    def get(self, method, params=None, version=None):
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        r = self.session.get(endpoint + method, params=params)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
         return r
 
-    def post(self, method, params, headers=None):
-        r = self.session.post(self.endpoint + method, data=json.dumps(params), headers=headers)
+    def post(self, method, params, headers=None, version=None):
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        r = self.session.post(endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
         return r
 
-    def put(self, method, params, headers=None):
-        r = self.session.put(self.endpoint + method, data=json.dumps(params), headers=headers) 
+    def put(self, method, params, headers=None, version=None):
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        r = self.session.put(endpoint + method, data=json.dumps(params), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
-        r.raise_for_status() 
+        r.raise_for_status()
         return r
 
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
@@ -98,8 +109,10 @@ class SumoLogic(object):
     def delete_search_job(self, search_job):
         return self.delete('/search/jobs/' + str(search_job['id']))
 
-    def collectors(self, limit=None, offset=None):
+    def collectors(self, limit=None, offset=None, filter_type=None):
         params = {'limit': limit, 'offset': offset}
+        if filter_type:
+            params['filter'] = filter_type
         r = self.get('/collectors', params)
         return json.loads(r.text)['collectors']
 
@@ -159,7 +172,7 @@ class SumoLogic(object):
                 ts = ts*10**(12-len(str(ts)))
             return int(ts)
 
-        params = {'query': [{"query":query, "rowId":"A"}],
+        params = {'query': [{"query": query, "rowId": "A"}],
                   'startTime': millisectimestamp(fromTime),
                   'endTime': millisectimestamp(toTime),
                   'requestedDataPoints': requestedDataPoints,
@@ -170,3 +183,38 @@ class SumoLogic(object):
     def get_available_builds(self):
         r = self.get('/collectors/upgrades/targets')
         return json.loads(r.text)['targets']
+
+    def sync_folder(self, folder_id, content):
+        return self.post('/content/folders/%s/synchronize' % folder_id, params=content, version='v2')
+
+    def check_sync_folder(self, folder_id, job_id):
+        return self.get('/content/folders/%s/synchronize/%s/status' % (folder_id, job_id), version='v2')
+
+    def delete_folder(self, folder_id):
+        return self.delete('/content/%s/delete' % folder_id, version='v2')
+
+    def create_folder(self, name, description, parent_folder_id):
+        content = {
+            "name": name,
+            "description": description,
+            "parentId": parent_folder_id
+        }
+        return self.post('/content/folders', params=content, version='v2')
+
+    def get_personal_folder(self):
+        return self.get('/content/folders/personal', version='v2')
+
+    def import_content(self, folder_id, content, is_overwrite="false"):
+        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content, version='v2')
+
+    def check_import_status(self, folder_id, job_id):
+        return self.get('/content/folders/%s/import/%s/status' % (folder_id, job_id), version='v2')
+
+    def get_folder(self, folder_id):
+        return self.get('/content/folders/%s' % folder_id, version='v2')
+
+    def install_app(self, app_id, content):
+        return self.post('/apps/%s/install' % (app_id), params=content)
+
+    def check_app_install_status(self, job_id):
+        return self.get('/apps/install/%s/status' % job_id)
