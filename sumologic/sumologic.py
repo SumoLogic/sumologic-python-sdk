@@ -1,13 +1,12 @@
 import json
 import requests
-
+import os
 try:
     import cookielib
 except ImportError:
     import http.cookiejar as cookielib
 
 class SumoLogic(object):
-
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
@@ -37,6 +36,7 @@ class SumoLogic(object):
         This method makes a request to the default REST endpoint and resolves the 401 to learn
         the right endpoint
         """
+
         self.endpoint = 'https://api.sumologic.com/api'
         self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')  # Dummy call to get endpoint
         endpoint = self.response.url.replace('/v1/collectors', '')  # dirty hack to sanitise URI and retain domain
@@ -68,6 +68,31 @@ class SumoLogic(object):
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.post(endpoint + method, data=json.dumps(params), headers=headers)
+        if 400 <= r.status_code < 600:
+            r.reason = r.text
+        r.raise_for_status()
+        return r
+
+    def post_file(self, method, params, headers=None, version=None):
+        """
+        Handle file uploads via a separate post request to avoid having to clear
+        the content-type header in the session.  
+
+        Requests (or urllib3) does not set a boundary in the header if the content-type
+        is already set to multipart/form-data.  Urllib will create a boundary but it 
+        won't be specified in the content-type header, producing invalid POST request.
+
+        Multi-threaded applications using self.session may experience issues if we 
+        try to clear the content-type from the session.  Thus we don't re-use the 
+        session for the upload, rather we create a new one off session.
+        """
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        post_params = {'merge': params['merge']}
+        file_data = open(params['full_file_path'], 'rb').read()  
+        files = {'file': (params['file_name'], file_data)} 
+        r = requests.post(endpoint + method, files=files, params=post_params, 
+                auth=(self.session.auth[0], self.session.auth[1]), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
@@ -149,6 +174,10 @@ class SumoLogic(object):
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
+    def create_content(self, path, data):
+        r = self.post('/content/' + path, data)
+        return r.text
+
     def dashboards(self, monitors=False):
         params = {'monitors': monitors}
         r = self.get('/dashboards', params)
@@ -218,3 +247,58 @@ class SumoLogic(object):
 
     def check_app_install_status(self, job_id):
         return self.get('/apps/install/%s/status' % job_id)
+
+    def export_content(self, content_id):
+        return self.post('/content/%s/export' % content_id, params="", version='v2')
+		
+    def check_export_status(self, content_id, job_id):
+        return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2')
+
+    def export_content_results(self, content_id, job_id):
+        return self.get('/content/%s/export/%s/result' % (content_id, job_id), version='v2')
+		
+    def delete_content(self, content_id):
+        return self.delete('/content/%s/delete' % content_id, version='v2')
+
+    def check_delete_status(self, content_id, job_id):
+        return self.get('/content/%s/delete/%s/status' % (content_id, job_id), version='v2')
+
+    def get_content(self, path):
+        return self.get('/content/%s' % path, version='v2')
+
+    def copy_content(self, content_id, destination_folder):
+        return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None, version='v2')
+
+    def check_copy_status(self, content_id, job_id):
+        return self.get('/content/%s/copy/%s/status' % (content_id, job_id), version='v2')
+    
+    def move_content(self, content_id, destination_folder):
+        return self.post('/content/%s/move?destinationFolderId=%s' % (content_id, destination_folder), params=None, version='v2')
+
+    def create_lookup_table(self, content):
+        return self.post('/lookupTables', params=content, version='v1')
+    
+    def get_lookup_table(self, id):
+        return self.get('/lookupTables/%s' % id, version='v1')
+    
+    def edit_lookup_table(self, id, content):
+        return self.put('/lookupTables/%s' % id, params=content, version='v1')
+
+    def delete_lookup_table(self, id):
+        return self.delete('/lookupTables/%s' % id, version='v1')
+
+    def upload_csv_lookup_table(self, id, file_path, file_name, merge='false'):
+        params={'file_name': file_name,
+                'full_file_path': os.path.join(file_path, file_name),
+                'merge': merge
+                }
+        return self.post_file('/lookupTables/%s/upload' % id, params, version='v1')
+    
+    def check_lookup_status(self, id):
+        return self.get('/lookupTables/jobs/%s/status' % id, version='v1')
+
+    def empty_lookup_table(self, id):
+        return self.post('/lookupTables/%s/truncate'% id, params=None, version='v1')
+    
+    def update_lookup_table(self, id, content):
+        return self.put('/lookupTables/%s/row' % id, params=content, version='v1')
