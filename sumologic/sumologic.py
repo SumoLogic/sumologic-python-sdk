@@ -249,7 +249,7 @@ class SumoLogic(object):
         return self.get('/apps/install/%s/status' % job_id)
 
     def export_content(self, content_id):
-        return self.post('/content/%s/export' % content_id, params=content_id, version='v2')
+        return self.post('/content/%s/export' % content_id, params="", version='v2')
 		
     def check_export_status(self, content_id, job_id):
         return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2')
