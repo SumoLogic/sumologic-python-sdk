@@ -250,13 +250,13 @@ class SumoLogic(object):
 
     def export_content(self, content_id):
         return self.post('/content/%s/export' % content_id, params="", version='v2')
-		
+
     def check_export_status(self, content_id, job_id):
         return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2')
 
-    def export_content_results(self, content_id, job_id):
+    def get_export_content_result(self, content_id, job_id):
         return self.get('/content/%s/export/%s/result' % (content_id, job_id), version='v2')
-		
+
     def delete_content(self, content_id):
         return self.delete('/content/%s/delete' % content_id, version='v2')
 
