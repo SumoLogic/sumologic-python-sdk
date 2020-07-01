@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import sys
 try:
     import cookielib
 except ImportError:
@@ -40,7 +41,7 @@ class SumoLogic(object):
         self.endpoint = 'https://api.sumologic.com/api'
         self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')  # Dummy call to get endpoint
         endpoint = self.response.url.replace('/v1/collectors', '')  # dirty hack to sanitise URI and retain domain
-        print("SDK Endpoint", endpoint)
+        print("SDK Endpoint", endpoint, file=sys.stderr)
         return endpoint
 
     def get_versioned_endpoint(self, version):
