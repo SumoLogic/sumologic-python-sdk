@@ -44,8 +44,6 @@ class SumoLogic(object):
         if self.response.status_code == 401:
             self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')
             endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
-        else:
-            endpoint = self.response.url.replace('/collectors', '')  # dirty hack to sanitise URI and retain domain
         return endpoint
 
     def delete(self, method, params=None):
