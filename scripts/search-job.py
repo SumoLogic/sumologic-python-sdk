@@ -1,16 +1,14 @@
 # Submits search job, waits for completion, then prints and emails results.
 # Pass the query via stdin.
 #
-# cat query.sumoql | python search-job.py <accessId> <accessKey> \
-# <endpoint> <fromDate> <toDate> <timeZone> <byReceiptTime>
+# cat query.sumoql | python search-job.py <accessId> <accessKey> <endpoint> <fromDate> <toDate> <timeZone> <byReceiptTime>
 #
 # Note: fromDate and toDate must be either ISO 8601 date-times or epoch
 #       milliseconds
 #
 # Example:
 #
-# cat query.sumoql | python search-job.py <accessId> <accessKey> \
-# https://api.us2.sumologic.com/api/v1 1408643380441 1408649380441 PST false
+# cat query.sumoql | python search-job.py <accessId> <accessKey> https://api.us2.sumologic.com/api/v1 1408643380441 1408649380441 PST false
 
 import json
 import sys
@@ -21,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 from sumologic import SumoLogic
 
-LIMIT = 42
+LIMIT = 1000000
 
 args = sys.argv
 sumo = SumoLogic(args[1], args[2], args[3])
