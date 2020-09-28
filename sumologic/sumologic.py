@@ -338,13 +338,13 @@ class SumoLogic(object):
 
     # explorer
     def create_explorer_view(self, content):
-        return self.post('/topologies', params=content, version='v1alpha')
+        return self.post('/entities/hierarchies', params=content, version='v1')
 
     def delete_explorer_view(self, explorer_id):
-        return self.delete('/topologies/%s' % explorer_id, version='v1alpha')
+        return self.delete('/entities/hierarchies/%s' % explorer_id, version='v1')
 
     def get_explorer_views(self):
-        response = self.get('/topologies', version='v1alpha')
+        response = self.get('/entities/hierarchies', version='v1')
         return json.loads(response.text)
 
     # metric rule
