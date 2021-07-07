@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 - Fixes for issue #63
 - removing endpoint print statement from stderr via PR64 
 
+### Added
+- Script to Export all content, and necessary changes in main sumologic.py to support it
+
 ## [0.1.11]
 ### Added
 - Added content management and lookup apis via PR62

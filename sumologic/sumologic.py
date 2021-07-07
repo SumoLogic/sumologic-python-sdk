@@ -56,10 +56,10 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
-    def get(self, method, params=None, version=None):
+    def get(self, method, params=None, version=None, headers=None):
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
-        r = self.session.get(endpoint + method, params=params)
+        r = self.session.get(endpoint + method, params=params, headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
@@ -249,14 +249,29 @@ class SumoLogic(object):
     def check_app_install_status(self, job_id):
         return self.get('/apps/install/%s/status' % job_id)
 
-    def export_content(self, content_id):
+    def export_content(self, content_id, isAdminMode=False):
+        if isAdminMode:
+            return self.post('/content/%s/export' % content_id, params="", version='v2', headers={'isAdminMode': 'true'})
         return self.post('/content/%s/export' % content_id, params="", version='v2')
 
-    def check_export_status(self, content_id, job_id):
+    def check_export_status(self, content_id, job_id, isAdminMode=False):
+        if isAdminMode:
+            return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2', headers={'isAdminMode': 'true'})
         return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2')
 
-    def get_export_content_result(self, content_id, job_id):
+    def get_export_content_result(self, content_id, job_id, isAdminMode=False):
+        if isAdminMode:
+            return self.get('/content/%s/export/%s/result' % (content_id, job_id), version='v2', headers={'isAdminMode': 'true'})
         return self.get('/content/%s/export/%s/result' % (content_id, job_id), version='v2')
+
+    def global_export_content(self):
+        return self.get('/content/folders/global',                      version='v2', headers={'isAdminMode': 'true'})
+
+    def global_check_export_status(self, job_id):
+        return self.get('/content/folders/global/%s/status' % job_id,   version='v2', headers={'isAdminMode': 'true'})
+
+    def global_get_export_content_result(self, job_id):
+        return self.get('/content/folders/global/%s/result' % job_id,   version='v2', headers={'isAdminMode': 'true'})
 
     def delete_content(self, content_id):
         return self.delete('/content/%s/delete' % content_id, version='v2')
