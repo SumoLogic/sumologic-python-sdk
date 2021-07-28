@@ -1,0 +1,16 @@
+{
+  "name": "Application Service View",
+  "level": {
+    "entityType": "application",
+    "nextLevelsWithConditions": [],
+    "nextLevel": {
+        "entityType": "service",
+        "nextLevelsWithConditions": [],
+        "nextLevel": {
+            "entityType": "operation",
+            "nextLevelsWithConditions": []
+        }
+    }
+  },
+  "filter": {"key": "_contentType", "value": "metricfromtrace"}
+}
