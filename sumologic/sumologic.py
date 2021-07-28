@@ -77,22 +77,22 @@ class SumoLogic(object):
     def post_file(self, method, params, headers=None, version=None):
         """
         Handle file uploads via a separate post request to avoid having to clear
-        the content-type header in the session.  
+        the content-type header in the session.
 
         Requests (or urllib3) does not set a boundary in the header if the content-type
-        is already set to multipart/form-data.  Urllib will create a boundary but it 
+        is already set to multipart/form-data.  Urllib will create a boundary but it
         won't be specified in the content-type header, producing invalid POST request.
 
-        Multi-threaded applications using self.session may experience issues if we 
-        try to clear the content-type from the session.  Thus we don't re-use the 
+        Multi-threaded applications using self.session may experience issues if we
+        try to clear the content-type from the session.  Thus we don't re-use the
         session for the upload, rather we create a new one off session.
         """
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         post_params = {'merge': params['merge']}
-        file_data = open(params['full_file_path'], 'rb').read()  
-        files = {'file': (params['file_name'], file_data)} 
-        r = requests.post(endpoint + method, files=files, params=post_params, 
+        file_data = open(params['full_file_path'], 'rb').read()
+        files = {'file': (params['file_name'], file_data)}
+        r = requests.post(endpoint + method, files=files, params=post_params,
                 auth=(self.session.auth[0], self.session.auth[1]), headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
@@ -108,6 +108,7 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    # Logs Search
     def search(self, query, fromTime=None, toTime=None, timeZone='UTC'):
         params = {'q': query, 'from': fromTime, 'to': toTime, 'tz': timeZone}
         r = self.get('/logs/search', params)
@@ -135,6 +136,45 @@ class SumoLogic(object):
     def delete_search_job(self, search_job):
         return self.delete('/search/jobs/' + str(search_job['id']))
 
+    # metrics
+    def search_metrics(self, query, fromTime=None, toTime=None, requestedDataPoints=600, maxDataPoints=800):
+        '''Perform a single Sumo metrics query'''
+
+        def millisectimestamp(ts):
+            '''Convert UNIX timestamp to milliseconds'''
+            if ts > 10 ** 12:
+                ts = ts / (10 ** (len(str(ts)) - 13))
+            else:
+                ts = ts * 10 ** (12 - len(str(ts)))
+            return int(ts)
+
+        params = {'query': [{"query": query, "rowId": "A"}],
+                  'startTime': millisectimestamp(fromTime),
+                  'endTime': millisectimestamp(toTime),
+                  'requestedDataPoints': requestedDataPoints,
+                  'maxDataPoints': maxDataPoints}
+        r = self.post('/metrics/results', params)
+        return json.loads(r.text)
+
+    def fetch_metric_data_points(self, content):
+        return self.post('/metrics/results', params=content)
+
+    # connection
+    def connection(self, connection_id):
+        r = self.get('/connections/' + str(connection_id))
+        return json.loads(r.text), r.headers['etag']
+
+    def create_connection(self, connection, headers=None):
+        return self.post('/connections', connection, headers)
+
+    def update_connection(self, connection, etag):
+        headers = {'If-Match': etag}
+        return self.put('/connections/' + str(connection['connection']['id']), connection, headers)
+
+    def delete_connection(self, connection_id, type):
+        return self.delete('/connections/' + connection_id + '?type=' + type)
+
+    # collection
     def collectors(self, limit=None, offset=None, filter_type=None):
         params = {'limit': limit, 'offset': offset}
         if filter_type:
@@ -175,6 +215,11 @@ class SumoLogic(object):
     def delete_source(self, collector_id, source):
         return self.delete('/collectors/' + str(collector_id) + '/sources/' + str(source['source']['id']))
 
+    def get_available_builds(self):
+        r = self.get('/collectors/upgrades/targets')
+        return json.loads(r.text)['targets']
+
+    # content
     def create_content(self, path, data):
         r = self.post('/content/' + path, data)
         return r.text
@@ -191,28 +236,6 @@ class SumoLogic(object):
     def dashboard_data(self, dashboard_id):
         r = self.get('/dashboards/' + str(dashboard_id) + '/data')
         return json.loads(r.text)['dashboardMonitorDatas']
-
-    def search_metrics(self, query, fromTime=None, toTime=None, requestedDataPoints=600, maxDataPoints=800):
-        '''Perform a single Sumo metrics query'''
-        def millisectimestamp(ts):
-            '''Convert UNIX timestamp to milliseconds'''
-            if ts > 10**12:
-                ts = ts/(10**(len(str(ts))-13))
-            else:
-                ts = ts*10**(12-len(str(ts)))
-            return int(ts)
-
-        params = {'query': [{"query": query, "rowId": "A"}],
-                  'startTime': millisectimestamp(fromTime),
-                  'endTime': millisectimestamp(toTime),
-                  'requestedDataPoints': requestedDataPoints,
-                  'maxDataPoints': maxDataPoints}
-        r = self.post('/metrics/results', params)
-        return json.loads(r.text)
-
-    def get_available_builds(self):
-        r = self.get('/collectors/upgrades/targets')
-        return json.loads(r.text)['targets']
 
     def sync_folder(self, folder_id, content):
         return self.post('/content/folders/%s/synchronize' % folder_id, params=content, version='v2')
@@ -235,19 +258,14 @@ class SumoLogic(object):
         return self.get('/content/folders/personal', version='v2')
 
     def import_content(self, folder_id, content, is_overwrite="false"):
-        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content, version='v2')
+        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content,
+                         version='v2')
 
     def check_import_status(self, folder_id, job_id):
         return self.get('/content/folders/%s/import/%s/status' % (folder_id, job_id), version='v2')
 
     def get_folder(self, folder_id):
         return self.get('/content/folders/%s' % folder_id, version='v2')
-
-    def install_app(self, app_id, content):
-        return self.post('/apps/%s/install' % (app_id), params=content)
-
-    def check_app_install_status(self, job_id):
-        return self.get('/apps/install/%s/status' % job_id)
 
     def export_content(self, content_id):
         return self.post('/content/%s/export' % content_id, params="", version='v2')
@@ -268,20 +286,23 @@ class SumoLogic(object):
         return self.get('/content/%s' % path, version='v2')
 
     def copy_content(self, content_id, destination_folder):
-        return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None, version='v2')
+        return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None,
+                         version='v2')
 
     def check_copy_status(self, content_id, job_id):
         return self.get('/content/%s/copy/%s/status' % (content_id, job_id), version='v2')
-    
-    def move_content(self, content_id, destination_folder):
-        return self.post('/content/%s/move?destinationFolderId=%s' % (content_id, destination_folder), params=None, version='v2')
 
+    def move_content(self, content_id, destination_folder):
+        return self.post('/content/%s/move?destinationFolderId=%s' % (content_id, destination_folder), params=None,
+                         version='v2')
+
+    # Lookup
     def create_lookup_table(self, content):
         return self.post('/lookupTables', params=content, version='v1')
-    
+
     def get_lookup_table(self, id):
         return self.get('/lookupTables/%s' % id, version='v1')
-    
+
     def edit_lookup_table(self, id, content):
         return self.put('/lookupTables/%s' % id, params=content, version='v1')
 
@@ -289,17 +310,81 @@ class SumoLogic(object):
         return self.delete('/lookupTables/%s' % id, version='v1')
 
     def upload_csv_lookup_table(self, id, file_path, file_name, merge='false'):
-        params={'file_name': file_name,
-                'full_file_path': os.path.join(file_path, file_name),
-                'merge': merge
-                }
+        params = {'file_name': file_name,
+                  'full_file_path': os.path.join(file_path, file_name),
+                  'merge': merge
+                  }
         return self.post_file('/lookupTables/%s/upload' % id, params, version='v1')
-    
+
     def check_lookup_status(self, id):
         return self.get('/lookupTables/jobs/%s/status' % id, version='v1')
 
     def empty_lookup_table(self, id):
-        return self.post('/lookupTables/%s/truncate'% id, params=None, version='v1')
-    
+        return self.post('/lookupTables/%s/truncate' % id, params=None, version='v1')
+
     def update_lookup_table(self, id, content):
         return self.put('/lookupTables/%s/row' % id, params=content, version='v1')
+
+    # apps
+    def install_app(self, app_id, content):
+        return self.post('/apps/%s/install' % (app_id), params=content)
+
+    def check_app_install_status(self, job_id):
+        return self.get('/apps/install/%s/status' % job_id)
+
+    def get_apps(self):
+        response = self.get('/apps')
+        return json.loads(response.text)
+
+    # explorer
+    def create_explorer_view(self, content):
+        return self.post('/entities/hierarchies', params=content, version='v1')
+
+    def delete_explorer_view(self, explorer_id):
+        return self.delete('/entities/hierarchies/%s' % explorer_id, version='v1')
+
+    def get_explorer_views(self):
+        response = self.get('/entities/hierarchies', version='v1')
+        return json.loads(response.text)
+
+    # metric rule
+    def create_metric_rule(self, content):
+        return self.post('/metricsRules', params=content)
+
+    def delete_metric_rule(self, metric_rule_name):
+        return self.delete('/metricsRules/%s' % metric_rule_name)
+
+    # FER
+    def create_field_extraction_rule(self, content):
+        return self.post('/extractionRules', params=content)
+
+    def delete_field_extraction_rule(self, fer_name):
+        return self.delete('/extractionRules/%s' % fer_name)
+
+    def get_all_field_extraction_rules(self, limit=None, token=None, ):
+        params = {'limit': limit, 'token': token}
+        r = self.get('/extractionRules', params)
+        return json.loads(r.text)
+
+    def update_field_extraction_rules(self, fer_id, fer_details):
+        return self.put('/extractionRules/%s' % fer_id, fer_details)
+
+    def get_fer_by_id(self, fer_id):
+        response = self.get('/extractionRules/%s' % fer_id)
+        return json.loads(response.text)
+
+    # Fields
+    def create_new_field(self, content):
+        response = self.post('/fields', params=content)
+        return json.loads(response.text)
+
+    def get_all_fields(self):
+        response = self.get('/fields')
+        return json.loads(response.text)['data']
+
+    def get_existing_field(self, field_id):
+        response = self.get('/fields/%s' % field_id)
+        return json.loads(response.text)
+
+    def delete_existing_field(self, field_id):
+        return self.delete('/fields/%s' % field_id)
