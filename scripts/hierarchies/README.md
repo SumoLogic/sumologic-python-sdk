@@ -2,6 +2,18 @@
 
 Creates hierarchy in sumologic org.
 
+# Prerequisites
+
+1> Install the sumologic-python-sdk using below command.
+   `pip install sumologic-sdk`
+   
+2> Download the [create_hierarchy.py](create_hierarchy.py) script from the github.
+
+3> Download the json hierarchy configuration file for one of the hierarchies ([Application Serview View](ApplicationServiceView.json), [Service Application View](ServiceApplicationView.json) or [Real User Monitoring](RealUserMonitoring.json)). You can also create your using the samples provided.
+
+
+4> Run the script using below command.
+
 usage: create_hierarchy.py [-h] -d DEPLOYMENT -c ACCESS_ID -k ACCESS_KEY -f FILE
 
 optional arguments:
