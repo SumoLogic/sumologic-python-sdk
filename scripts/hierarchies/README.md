@@ -12,7 +12,7 @@ Creates hierarchy in sumologic org.
 3> Download the json hierarchy configuration file for one of the hierarchies ([Application Serview View](ApplicationServiceView.json), [Service Application View](ServiceApplicationView.json) or [Real User Monitoring](RealUserMonitoring.json)). You can also create your using the samples provided.
 
 
-4> Run the script using below command.
+# Usage
 
 usage: create_hierarchy.py [-h] -d DEPLOYMENT -c ACCESS_ID -k ACCESS_KEY -f FILE
 
