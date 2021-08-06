@@ -1,0 +1,16 @@
+{
+  "name": "Real User Monitoring",
+  "level": {
+    "entityType": "application",
+    "nextLevelsWithConditions": [],
+    "nextLevel": {
+        "entityType": "service",
+        "nextLevelsWithConditions": [],
+        "nextLevel": {
+            "entityType": "action",
+            "nextLevelsWithConditions": []
+        }
+    }
+  },
+  "filter": {"key": "_contentType", "value": "RumMetricFromTrace"}
+}
