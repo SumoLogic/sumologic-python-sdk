@@ -11,6 +11,8 @@ Creates hierarchy in sumologic org.
 
 3> Download the json hierarchy configuration file for one of the hierarchies ([Application Serview View](ApplicationServiceView.json), [Service Application View](ServiceApplicationView.json) or [Real User Monitoring](RealUserMonitoring.json)). You can also create your using the samples provided.
 
+4> Sumo Logic user whose role has "Manage Entity Type Configs" permissions is required which you will use to login and generate access_id/access_keys using the instructions in [doc](https://help.sumologic.com/Manage/Security/Access-Keys#manage-your-access-keys-on-preferences-page).
+
 Note: The below command first deletes any existing hierarchy with same name and then deploys the new hierarchy.
 
 Tested on:
