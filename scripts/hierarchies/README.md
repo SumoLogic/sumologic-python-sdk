@@ -9,7 +9,7 @@ Creates hierarchy in sumologic org.
    
 2> Download the [create_hierarchy.py](create_hierarchy.py) script from the github.
 
-3> Download the json hierarchy configuration file for one of the hierarchies ([Application Serview View](ApplicationServiceView.json), [Service Application View](ServiceApplicationView.json) or [Real User Monitoring](RealUserMonitoring.json)). You can also create your using the samples provided.
+3> Download the json hierarchy configuration file for the hierarchy ([Real User Monitoring](RealUserMonitoring.json)). Note, that this api is not yet supported for custom hierarchies so only use the ones provided in the hierarchies folder.
 
 4> Sumo Logic user whose role has "Manage Entity Type Configs" permissions is required which you will use to login and generate access_id/access_keys using the instructions in [doc](https://help.sumologic.com/Manage/Security/Access-Keys#manage-your-access-keys-on-preferences-page).
 
