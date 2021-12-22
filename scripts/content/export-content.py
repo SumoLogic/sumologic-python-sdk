@@ -10,6 +10,8 @@ import logging
 logging.basicConfig(format="%(asctime)s %(levelname)s: %(message)s", level=logging.WARN)
 log = logging.getLogger()
 
+# Traverse the content tree starting with the given root folder and export all content of a type.
+# Content is dumped to stdout in JSON format.
 
 class AsyncJobStatus:
     IN_PROGRESS = "InProgress"
@@ -110,6 +112,8 @@ def traverse_tree(folder_id, content_type):
                 item = export_item(item_id)
                 print(f"## Item: '{cur_path}/{item_name}'")
                 print(json.dumps(item, indent=4))
+            # add sleep to avoid getting rate limited
+            time.sleep(1)
 
 
 if __name__ == '__main__':
