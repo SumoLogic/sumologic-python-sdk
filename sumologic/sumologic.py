@@ -257,6 +257,16 @@ class SumoLogic(object):
     def get_personal_folder(self):
         return self.get('/content/folders/personal', version='v2')
 
+    def get_global_folder(self):
+        response = self.get('/content/folders/global', version='v2')
+        job_id = response.json()["id"]
+        if self.get('/content/folders/global/{}/status'.format(job_id),
+                    version='v2').json()["status"] == "Success":
+            return self.get('/content/folders/global/{}/result'.format(job_id),
+                            version='v2')
+        else:
+            return None
+
     def import_content(self, folder_id, content, is_overwrite="false"):
         return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content,
                          version='v2')
