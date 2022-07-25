@@ -2,6 +2,7 @@ import json
 import requests
 import os
 import sys
+import time
 try:
     import cookielib
 except ImportError:
@@ -260,6 +261,7 @@ class SumoLogic(object):
     def get_global_folder(self):
         response = self.get('/content/folders/global', version='v2')
         job_id = response.json()["id"]
+        time.sleep(.5)
         if self.get('/content/folders/global/{}/status'.format(job_id),
                     version='v2').json()["status"] == "Success":
             return self.get('/content/folders/global/{}/result'.format(job_id),
@@ -293,7 +295,10 @@ class SumoLogic(object):
         return self.get('/content/%s/delete/%s/status' % (content_id, job_id), version='v2')
 
     def get_content(self, path):
-        return self.get('/content/%s' % path, version='v2')
+        return self.get('/content/path?path=%s' % path, version='v2')
+
+    def get_content_path(self, content_id):
+        return self.get('/content/%s/path' % content_id, version='v2')
 
     def copy_content(self, content_id, destination_folder):
         return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None,
