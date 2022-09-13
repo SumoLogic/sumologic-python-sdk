@@ -107,7 +107,9 @@ class SumoLogic(object):
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         img = requests.get(endpoint + method, params=params, allow_redirects=True, auth=(self.session.auth[0], self.session.auth[1]), headers=headers)
-        with open('result.png', 'wb') as f:
+        filetype = params['exportFormat']
+        filename = 'result.' + str(filetype)
+        with open(filename, 'wb') as f:
             f.write(img.content)
         r = self.session.get(endpoint + method, params=params)
         if 400 <= r.status_code < 600:
