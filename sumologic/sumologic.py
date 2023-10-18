@@ -291,8 +291,6 @@ class SumoLogic(object):
         return self.post('/content/%s/move?destinationFolderId=%s' % (content_id, destination_folder), params=None,
                          version='v2')
 
-    # Additions
-
     def get_content_item_by_path(self, path):
         return self.get('/content/path?path=%s' % (path), params=None, version='v2')
 
