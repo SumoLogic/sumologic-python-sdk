@@ -8,6 +8,7 @@ try:
 except ImportError:
     import http.cookiejar as cookielib
 
+
 class SumoLogic(object):
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
@@ -50,7 +51,7 @@ class SumoLogic(object):
         if self.method.lower().startswith("/sec/"):
             return self.endpoint
         else:
-            return self.endpoint+'/%s' % version
+            return self.endpoint + '/%s' % version
 
     def delete(self, method, params=None, version=None):
         self.method = method
@@ -102,7 +103,8 @@ class SumoLogic(object):
         file_data = open(params['full_file_path'], 'rb').read()
         files = {'file': (params['file_name'], file_data)}
         r = requests.post(endpoint + method, files=files, params=post_params,
-                auth=(self.session.auth[0], self.session.auth[1]), headers=headers)
+                          auth=(self.session.auth[0], self.session.auth[1]),
+                          headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
@@ -335,15 +337,15 @@ class SumoLogic(object):
 
     def get_content_item_by_path(self, path):
         return self.get('/content/path?path=%s' % (path), params=None, version='v2')
-    
-    #dashboard (new)
+
+    # dashboard (new)
     def start_report(self, action_type, export_format, timezone, template, dashid):
         content = {
             "action": {
                 "actionType": action_type,
             },
             "exportFormat": export_format,
-            "timezone" : timezone,
+            "timezone": timezone,
             "template": {
                 "templateType": template,
                 "id": dashid
@@ -506,7 +508,7 @@ class SumoLogic(object):
         resp = self.post('/sec/v1/custom-insights', params=params)
 
         return resp.json()["data"]
-    
+
     def get_cse_rules(self, query_string=None, types=["match", "aggregation", "chain", "threshold"]):
         rules = []
         params = {
@@ -532,7 +534,7 @@ class SumoLogic(object):
                 rule["descriptionExpression"] = rule["description"]
 
         rules = [rule for rule in rules if rule["ruleType"] in types]
-        
+
         return rules
 
     def get_cse_rule_tuning_expressions(self):
@@ -676,7 +678,6 @@ class SumoLogic(object):
             threat_intel_indicators.extend(result["data"]["objects"])
 
         return threat_intel_indicators
-        
 
     def add_indicators_to_cse_threat_intel_source(self, threat_intel_source_id, indicators):
         params = {"indicators": indicators}
