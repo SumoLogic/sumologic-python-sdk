@@ -2,6 +2,10 @@
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- Added V2 report job apis
+- Added get_file api for use with V2 report job
+
 ### Fixed
 - Fixes for issue #63
 - removing endpoint print statement from stderr via PR64 
