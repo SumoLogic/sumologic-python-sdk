@@ -99,6 +99,24 @@ class SumoLogic(object):
         r.raise_for_status()
         return r
 
+    def get_file(self, method, params, headers=None, version=None):
+        '''
+            based this off the post_file method above and is intended for the new report job methods
+            the dashboard report is downloaded as "result.xxx" and is placed in the root directory
+        '''
+        version = version or self.DEFAULT_VERSION
+        endpoint = self.get_versioned_endpoint(version)
+        img = requests.get(endpoint + method, params=params, allow_redirects=True, auth=(self.session.auth[0], self.session.auth[1]), headers=headers)
+        filetype = params['exportFormat']
+        filename = 'result.' + str(filetype)
+        with open(filename, 'wb') as f:
+            f.write(img.content)
+        r = self.session.get(endpoint + method, params=params)
+        if 400 <= r.status_code < 600:
+            r.reason = r.text
+        r.raise_for_status()
+        return r
+
     def put(self, method, params, headers=None, version=None):
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
@@ -293,6 +311,30 @@ class SumoLogic(object):
 
     def get_content_item_by_path(self, path):
         return self.get('/content/path?path=%s' % (path), params=None, version='v2')
+    
+    #dashboard (new)
+    def start_report(self, action_type, export_format, timezone, template, dashid):
+        content = {
+            "action": {
+                "actionType": action_type,
+            },
+            "exportFormat": export_format,
+            "timezone" : timezone,
+            "template": {
+                "templateType": template,
+                "id": dashid
+            }
+        }
+        r = self.post('/dashbaords/reportJobs', params=content, version='v2')
+        return json.loads(r.text)['id']
+
+    def report_status(self, jobID):
+        r = self.get('/dashboards/reportJobs/' + str(jobID) + '/status', params=jobID, version='v2')
+        return json.loads(r.text)['status']
+
+    def report_result(self, jobID):
+        r = self.get_file('/dashboards/reportJobs/' + str(jobID) + '/results', params=jobID, version='v2')
+        return json.loads(r.text)['id']
 
     # Lookup
     def create_lookup_table(self, content):
