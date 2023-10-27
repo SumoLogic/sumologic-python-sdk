@@ -2,6 +2,7 @@ import json
 import requests
 import os
 import sys
+import time
 try:
     import cookielib
 except ImportError:
@@ -12,6 +13,7 @@ class SumoLogic(object):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
         self.DEFAULT_VERSION = 'v1'
+        self.method = None
         self.session.headers = {'content-type': 'application/json', 'accept': 'application/json'}
         if caBundle is not None:
             self.session.verify = caBundle
@@ -45,9 +47,13 @@ class SumoLogic(object):
         return endpoint
 
     def get_versioned_endpoint(self, version):
-        return self.endpoint+'/%s' % version
+        if self.method.lower().startswith("/sec/"):
+            return self.endpoint
+        else:
+            return self.endpoint+'/%s' % version
 
     def delete(self, method, params=None, version=None):
+        self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.delete(endpoint + method, params=params)
@@ -57,6 +63,7 @@ class SumoLogic(object):
         return r
 
     def get(self, method, params=None, version=None):
+        self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.get(endpoint + method, params=params)
@@ -66,6 +73,7 @@ class SumoLogic(object):
         return r
 
     def post(self, method, params, headers=None, version=None):
+        self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.post(endpoint + method, data=json.dumps(params), headers=headers)
@@ -87,6 +95,7 @@ class SumoLogic(object):
         try to clear the content-type from the session.  Thus we don't re-use the
         session for the upload, rather we create a new one off session.
         """
+        self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         post_params = {'merge': params['merge']}
@@ -118,6 +127,7 @@ class SumoLogic(object):
         return r
 
     def put(self, method, params, headers=None, version=None):
+        self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
         r = self.session.put(endpoint + method, data=json.dumps(params), headers=headers)
@@ -270,6 +280,17 @@ class SumoLogic(object):
     def get_personal_folder(self):
         return self.get('/content/folders/personal', version='v2')
 
+    def get_global_folder(self):
+        response = self.get('/content/folders/global', version='v2')
+        job_id = response.json()["id"]
+        time.sleep(.5)
+        if self.get('/content/folders/global/{}/status'.format(job_id),
+                    version='v2').json()["status"] == "Success":
+            return self.get('/content/folders/global/{}/result'.format(job_id),
+                            version='v2')
+        else:
+            return None
+
     def import_content(self, folder_id, content, is_overwrite="false"):
         return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content,
                          version='v2')
@@ -296,7 +317,10 @@ class SumoLogic(object):
         return self.get('/content/%s/delete/%s/status' % (content_id, job_id), version='v2')
 
     def get_content(self, path):
-        return self.get('/content/%s' % path, version='v2')
+        return self.get('/content/path?path=%s' % path, version='v2')
+
+    def get_content_path(self, content_id):
+        return self.get('/content/%s/path' % content_id, version='v2')
 
     def copy_content(self, content_id, destination_folder):
         return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None,
@@ -428,3 +452,242 @@ class SumoLogic(object):
 
     def delete_existing_field(self, field_id):
         return self.delete('/fields/%s' % field_id)
+
+    # CSE
+    def get_cse_custom_entity_types(self):
+        custom_entity_types = []
+        params = {
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/custom-entity-types', params)
+        result = response.json()
+        total = result["data"]["total"]
+        custom_entity_types.extend(result["data"]["objects"])
+        while len(custom_entity_types) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/custom-entity-types', params)
+            result = response.json()
+            custom_entity_types.extend(result["data"]["objects"])
+
+        return custom_entity_types
+
+    def get_cse_custom_insights(self):
+        custom_insights = []
+        params = {
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/custom-insights', params)
+        result = response.json()
+        total = result["data"]["total"]
+        custom_insights.extend(result["data"]["objects"])
+        while len(custom_insights) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/custom-insights', params)
+            result = response.json()
+            custom_insights.extend(result["data"]["objects"])
+
+        return custom_insights
+
+    def create_cse_custom_insight(self, name, description, severity, rule_ids, tags, enabled=True, ordered=True):
+        params = {
+            "fields":
+            {
+                "name": name,
+                "description": description,
+                "severity": severity,
+                "ruleIds": rule_ids,
+                "tags": tags,
+                "enabled": enabled,
+                "ordered": ordered
+            }
+        }
+        resp = self.post('/sec/v1/custom-insights', params=params)
+
+        return resp.json()["data"]
+    
+    def get_cse_rules(self, query_string=None, types=["match", "aggregation", "chain", "threshold"]):
+        rules = []
+        params = {
+            "q": query_string,
+            "offset": 0,
+            "limit": 100,
+            "expand": "tuningExpressions"
+        }
+        response = self.get('/sec/v1/rules', params)
+        result = response.json()
+        total = result["data"]["total"]
+        rules.extend(result["data"]["objects"])
+        while len(rules) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/rules', params)
+            result = response.json()
+            rules.extend(result["data"]["objects"])
+
+        for rule in rules:
+            if rule["ruleType"] == "templated match":
+                rule["ruleType"] = "match"
+            if "descriptionExpression" not in rule.keys():
+                rule["descriptionExpression"] = rule["description"]
+
+        rules = [rule for rule in rules if rule["ruleType"] in types]
+        
+        return rules
+
+    def get_cse_rule_tuning_expressions(self):
+        rule_tuning_expressions = []
+        params = {
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/rule-tuning-expressions', params)
+        result = response.json()
+        total = result["data"]["total"]
+        rule_tuning_expressions.extend(result["data"]["objects"])
+        while len(rule_tuning_expressions) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/rule-tuning-expressions', params)
+            result = response.json()
+            rule_tuning_expressions.extend(result["data"]["objects"])
+
+        return rule_tuning_expressions
+
+    def get_cse_log_mappings(self, query_string=None):
+        log_mappings = []
+        params = {
+            "q": query_string,
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/log-mappings', params)
+        result = response.json()
+        total = result["data"]["total"]
+        log_mappings.extend(result["data"]["objects"])
+        while len(log_mappings) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/log-mappings', params)
+            result = response.json()
+            log_mappings.extend(result["data"]["objects"])
+
+        return log_mappings
+
+    def get_cse_match_lists(self):
+        match_lists = []
+        params = {
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/match-lists', params)
+        result = response.json()
+        total = result["data"]["total"]
+        match_lists.extend(result["data"]["objects"])
+        while len(match_lists) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/match-lists', params)
+            result = response.json()
+            match_lists.extend(result["data"]["objects"])
+
+        return match_lists
+
+    def create_cse_match_list(self, name, target_column, description=None, default_ttl=None, active=True):
+        params = {
+            "fields":
+            {
+                "name": name,
+                "targetColumn": target_column,
+                "description": description,
+                "defaultTtl": default_ttl,
+                "active": active
+            }
+        }
+        resp = self.post('/sec/v1/match-lists', params=params)
+
+        return resp.json()["data"]
+
+    def delete_cse_match_list(self, match_list_id):
+        response = self.delete('/sec/v1/match-lists/{}'.format(match_list_id))
+        result = response.json()
+
+        return result
+
+    def add_items_to_cse_match_list(self, match_list_id, items):
+        params = {"items": items}
+
+        response = self.post("/sec/v1/match-lists/{}/items".format(match_list_id), params=params)
+        result = response.json()
+
+        return result
+
+    def get_cse_threat_intel_sources(self):
+        threat_intel_sources = []
+        params = {
+            "offset": 0,
+            "limit": 100,
+        }
+        response = self.get('/sec/v1/threat-intel-sources', params)
+        result = response.json()
+        total = result["data"]["total"]
+        threat_intel_sources.extend(result["data"]["objects"])
+        while len(threat_intel_sources) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/threat-intel-sources', params)
+            result = response.json()
+            threat_intel_sources.extend(result["data"]["objects"])
+
+        return threat_intel_sources
+
+    def create_cse_threat_intel_source(self, name, description=None):
+        params = {
+            "fields":
+            {
+                "name": name,
+                "description": description or "",
+            }
+        }
+        resp = self.post('/sec/v1/threat-intel-sources', params=params)
+
+        return resp.json()["data"]
+
+    # note: this does not work
+    def delete_cse_threat_intel_source(self, threat_intel_source_id):
+        response = self.delete('/sec/v1/threat-intel-sources/{}'.format(threat_intel_source_id))
+        result = response.json()
+
+        return result
+
+    def get_cse_threat_intel_indicators(self, threat_intel_source_id, query_string=None):
+        threat_intel_indicators = []
+        params = {
+            "sourceIds": [threat_intel_source_id],
+            "q": query_string,
+            "offset": 0,
+            "limit": 100,
+            "expand": "source"
+        }
+        response = self.get('/sec/v1/threat-intel-indicators', params)
+        result = response.json()
+        total = result["data"]["total"]
+        threat_intel_indicators.extend(result["data"]["objects"])
+        while len(threat_intel_indicators) < total:
+            params["offset"] += 100
+            response = self.get('/sec/v1/threat-intel-indicators', params)
+            result = response.json()
+            threat_intel_indicators.extend(result["data"]["objects"])
+
+        return threat_intel_indicators
+        
+
+    def add_indicators_to_cse_threat_intel_source(self, threat_intel_source_id, indicators):
+        params = {"indicators": indicators}
+
+        response = self.post("/sec/v1/threat-intel-sources/{}/items".format(threat_intel_source_id), params=params)
+        result = response.json()
+
+        return result
+
+    def delete_cse_threat_intel_indicator(self, threat_intel_indicator_id):
+        response = self.delete('/sec/v1/threat-intel-indicators/{}'.format(threat_intel_indicator_id))
+        result = response.json()
+
+        return result
