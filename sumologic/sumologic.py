@@ -3,6 +3,9 @@ import requests
 import os
 import sys
 import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
 try:
     import cookielib
 except ImportError:
@@ -12,6 +15,12 @@ except ImportError:
 class SumoLogic(object):
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
+        retries = Retry(total=3, backoff_factor=1, status_forcelist=[500, 502, 503, 504, 429])
+        adapter = HTTPAdapter(max_retries=retries)
+        self.session.mount('https://', adapter)
+        self.session.mount('http://', adapter)
+
+
         self.session.auth = (accessId, accessKey)
         self.DEFAULT_VERSION = 'v1'
         self.method = None
@@ -268,16 +277,31 @@ class SumoLogic(object):
     def check_sync_folder(self, folder_id, job_id):
         return self.get('/content/folders/%s/synchronize/%s/status' % (folder_id, job_id), version='v2')
 
-    def delete_folder(self, folder_id):
-        return self.delete('/content/%s/delete' % folder_id, version='v2')
+    def delete_folder(self, folder_id, isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.delete('/content/%s/delete' % folder_id, headers=headers, version='v2')
 
-    def create_folder(self, name, description, parent_folder_id):
+    def create_folder(self, name, description, parent_folder_id, isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
         content = {
             "name": name,
             "description": description,
             "parentId": parent_folder_id
         }
-        return self.post('/content/folders', params=content, version='v2')
+        return self.post('/content/folders', params=content, headers=headers, version='v2')
+
+    def get_children_folder(self, folder_id):
+        r = self.get('/content/folders/%s' % folder_id, version='v2')
+        return json.loads(r.text)['children']
+
+    def folder_not_exist(self, folder_id):
+        endpoint = self.get_versioned_endpoint('v2')
+        r = self.session.get(endpoint + '/content/folders/' + folder_id, params=None)
+        return "Content with the given ID does not exist." in r.text
+
+    def get_parent_folder_id(self, folder_id):
+        r = self.get('/content/folders/%s' % folder_id, version='v2')
+        return json.loads(r.text)['parentId']
 
     def get_personal_folder(self):
         return self.get('/content/folders/personal', version='v2')
@@ -293,15 +317,25 @@ class SumoLogic(object):
         else:
             return None
 
-    def import_content(self, folder_id, content, is_overwrite="false"):
-        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), params=content,
+    def import_content(self, folder_id, content, is_overwrite="false", isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), headers=headers, params=content,
                          version='v2')
 
     def check_import_status(self, folder_id, job_id):
         return self.get('/content/folders/%s/import/%s/status' % (folder_id, job_id), version='v2')
 
-    def get_folder(self, folder_id):
-        return self.get('/content/folders/%s' % folder_id, version='v2')
+    def get_folder(self, folder_id, isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.get('/content/folders/%s' % folder_id, headers = headers, version='v2')
+
+    def update_folder(self, folder_id, isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.get('/content/folders/%s' % folder_id, headers = headers, version='v2')
+
+    def copy_folder(self, folder_id, destination_folder_id, isAdmin=False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.post('/content/%s/copy?destinationFolder=%s' % (folder_id, destination_folder_id), headers=headers,params={}, version='v2')
 
     def export_content(self, content_id):
         return self.post('/content/%s/export' % content_id, params="", version='v2')
@@ -392,8 +426,9 @@ class SumoLogic(object):
         return self.put('/lookupTables/%s/row' % id, params=content, version='v1')
 
     # apps
-    def install_app(self, app_id, content):
-        return self.post('/apps/%s/install' % (app_id), params=content)
+    def install_app(self, app_id, content, isAdmin = False):
+        headers = {'isAdminMode': 'true'} if isAdmin else {}
+        return self.post('/apps/%s/install' % (app_id), headers=headers, params=content)
 
     def check_app_install_status(self, job_id):
         return self.get('/apps/install/%s/status' % job_id)
@@ -692,3 +727,24 @@ class SumoLogic(object):
         result = response.json()
 
         return result
+
+    # monitors
+    def import_monitors(self, folder_id, content):
+        response = self.post('/monitors/%s/import' % folder_id, params=content)
+        return json.loads(response.text)
+
+    def set_monitors_permissions(self, content):
+        response = self.put('/monitors/permissions/set', params=content)
+        return json.loads(response.text)
+
+    def export_monitors(self, folder_id):
+        response = self.get('/monitors/%s/export' % folder_id)
+        return json.loads(response.text)
+
+    def get_root_folder(self):
+        response = self.get('/monitors/root')
+        return json.loads(response.text)
+
+    def delete_monitor_folder(self, folder_id):
+        return self.delete('/monitors/%s' % folder_id)
+
