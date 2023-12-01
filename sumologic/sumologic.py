@@ -148,7 +148,7 @@ class SumoLogic(object):
         return r
 
     # Logs Search
-    def search_job(self, query, fromTime=None, toTime=None, timeZone='UTC', byReceiptTime=None, autoParsingMode=None):
+    def search_job(self, query, fromTime=None, toTime=None, timeZone='UTC', byReceiptTime=None, autoParsingMode='Manual'):
         params = {'query': query, 'from': fromTime, 'to': toTime, 'timeZone': timeZone, 'byReceiptTime': byReceiptTime, 'autoParsingMode': autoParsingMode}
         r = self.post('/search/jobs', params)
         return json.loads(r.text)
