@@ -62,21 +62,21 @@ class SumoLogic(object):
         else:
             return self.endpoint + '/%s' % version
 
-    def delete(self, method, params=None, version=None):
+    def delete(self, method, params=None, version=None, headers=None):
         self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
-        r = self.session.delete(endpoint + method, params=params)
+        r = self.session.delete(endpoint + method, params=params, headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
         return r
 
-    def get(self, method, params=None, version=None):
+    def get(self, method, params=None, version=None, headers=None):
         self.method = method
         version = version or self.DEFAULT_VERSION
         endpoint = self.get_versioned_endpoint(version)
-        r = self.session.get(endpoint + method, params=params)
+        r = self.session.get(endpoint + method, params=params, headers=headers)
         if 400 <= r.status_code < 600:
             r.reason = r.text
         r.raise_for_status()
@@ -309,13 +309,16 @@ class SumoLogic(object):
     def get_global_folder(self):
         response = self.get('/content/folders/global', version='v2')
         job_id = response.json()["id"]
-        time.sleep(.5)
-        if self.get('/content/folders/global/{}/status'.format(job_id),
-                    version='v2').json()["status"] == "Success":
-            return self.get('/content/folders/global/{}/result'.format(job_id),
-                            version='v2')
-        else:
-            return None
+        retry_count = 12  # 12*5 = 60 1 minute
+        delay_between_requests = 5
+        while retry_count > 0:
+            status = sumocli.get('/content/folders/global/{}/status'.format(job_id),
+                                 version='v2').json()["status"]
+            if status == "Success":
+                return sumocli.get('/content/folders/global/{}/result'.format(job_id),
+                                   version='v2')
+            retry_count = retry_count - 1
+            time.sleep(delay_between_requests)
 
     def import_content(self, folder_id, content, is_overwrite="false", isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
