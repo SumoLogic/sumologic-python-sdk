@@ -1,7 +1,28 @@
 # CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
-## [Unreleased]
+## [0.1.16]
+### Fixed
+- Fixed Retry logic and bug related to headers to make it compatible with newer python versions
+
+## [0.1.15]
+### Fixed
+- Upgraded request dependency for CVE fixes
+
+## [0.1.14]
+### Added
+- Added monitor apis
+- Added retry logic
+
+### Fixed
+- fixed Flake 8 errors
+
+## [0.1.13]
+### Added
+- Added script for tracing hierarchy
+
+
+## [0.1.12]
 ### Added
 - Added V2 report job apis
 - Added get_file api for use with V2 report job
