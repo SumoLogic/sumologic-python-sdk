@@ -1,9 +1,9 @@
-name: "Bandit tests"
+name: "Run Static tests"
 on: [workflow_dispatch, pull_request]
 
 jobs:
   run-test:
-    name: "Run Bandit Tests"
+    name: "Run Bandit And Flake8 Tests"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -13,6 +13,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.8
+
+      - name: Install pipenv
+        run: pip install pipenv
 
       - name: Install dependencies
         run: |
@@ -26,6 +29,6 @@ jobs:
         run: |
           pipenv run  bandit  -r ../*
 
-      - name: Run Flake8
+      - name: Run Flake8 Tests
         run: |
           pipenv run flake8 --max-line-length=120 sumologic/*.py
