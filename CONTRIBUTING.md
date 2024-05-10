@@ -31,11 +31,16 @@ Contributing to cookbook-elasticsearch
 ### Building and Releasing
 
 1. Create/update the changelog entries and evaluate the type of release.
-1. create a git release with something like hub, example: `hub release create vMajor.Minor.patch`
 1. Run `pip install pipenv` to install pipenv
 1. Run `pipenv install --dev` to install dev dependencies
 1. Run `pipenv run python -m build`
 1. Run `pipenv run python -m twine upload  dist/*` to publish in pypi repository
+1. The new wheel package gets released automatically after the tags are pushed using Github actions(Refer tagged-release in https://github.com/marvinpinto/action-automatic-releases). Run below commands to create and push tags
+
+    `git tag -a v<major.minor.patch> <commit_id>`
+
+    `git push origin v<major.minor.patch>`
+
 
 ### Testing
 1. Generate the access keys by following the sumologic [docs](https://help.sumologic.com/docs/manage/security/access-keys/#from-the-preferences-page). The user should have `Manage Collectors` permissions.
