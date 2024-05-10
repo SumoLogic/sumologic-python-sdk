@@ -1,9 +1,9 @@
-name: "Run Static tests"
+name: "Run Security & Linting tests"
 on: [workflow_dispatch, pull_request]
 
 jobs:
   run-test:
-    name: "Run Static(Mypy/Flake8/Bandit) Tests"
+    name: "Run Security & Linting Tests"
     runs-on: "ubuntu-latest"
 
     steps:
