@@ -699,12 +699,6 @@
             "markers": "python_version >= '3.8'",
             "version": "==5.2.0"
         },
-        "sumologic-sdk": {
-            "extras": [
-                "test"
-            ],
-            "version": "==0.1.16"
-        },
         "twine": {
             "hashes": [
                 "sha256:89b0cc7d370a4b66421cc6102f269aa910fe0f1861c124f573cf2ddedbc10cf4",
