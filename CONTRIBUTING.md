@@ -1,4 +1,4 @@
-Contributing to cookbook-elasticsearch
+Contributing to sumologic-python-sdk
 ======================================
 
 ### Workflow for contributing
