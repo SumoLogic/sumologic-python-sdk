@@ -12,14 +12,13 @@ except ImportError:
     import http.cookiejar as cookielib
 
 
-class SumoLogic(object):
+class SumoLogic:
     def __init__(self, accessId, accessKey, endpoint=None, caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         retries = Retry(total=3, backoff_factor=1, status_forcelist=[500, 502, 503, 504, 429])
         adapter = HTTPAdapter(max_retries=retries)
         self.session.mount('https://', adapter)
         self.session.mount('http://', adapter)
-
 
         self.session.auth = (accessId, accessKey)
         self.DEFAULT_VERSION = 'v1'
@@ -312,11 +311,9 @@ class SumoLogic(object):
         retry_count = 12  # 12*5 = 60 1 minute
         delay_between_requests = 5
         while retry_count > 0:
-            status = sumocli.get('/content/folders/global/{}/status'.format(job_id),
-                                 version='v2').json()["status"]
+            status = self.get('/content/folders/global/{}/status'.format(job_id), version='v2').json()["status"]
             if status == "Success":
-                return sumocli.get('/content/folders/global/{}/result'.format(job_id),
-                                   version='v2')
+                return self.get('/content/folders/global/{}/result'.format(job_id), version='v2')
             retry_count = retry_count - 1
             time.sleep(delay_between_requests)
 
@@ -330,15 +327,15 @@ class SumoLogic(object):
 
     def get_folder(self, folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
-        return self.get('/content/folders/%s' % folder_id, headers = headers, version='v2')
+        return self.get('/content/folders/%s' % folder_id, headers=headers, version='v2')
 
     def update_folder(self, folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
-        return self.get('/content/folders/%s' % folder_id, headers = headers, version='v2')
+        return self.get('/content/folders/%s' % folder_id, headers=headers, version='v2')
 
     def copy_folder(self, folder_id, destination_folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
-        return self.post('/content/%s/copy?destinationFolder=%s' % (folder_id, destination_folder_id), headers=headers,params={}, version='v2')
+        return self.post('/content/%s/copy?destinationFolder=%s' % (folder_id, destination_folder_id), headers=headers, params={}, version='v2')
 
     def export_content(self, content_id):
         return self.post('/content/%s/export' % content_id, params="", version='v2')
@@ -429,7 +426,7 @@ class SumoLogic(object):
         return self.put('/lookupTables/%s/row' % id, params=content, version='v1')
 
     # apps
-    def install_app(self, app_id, content, isAdmin = False):
+    def install_app(self, app_id, content, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
         return self.post('/apps/%s/install' % (app_id), headers=headers, params=content)
 
@@ -568,7 +565,7 @@ class SumoLogic(object):
         for rule in rules:
             if rule["ruleType"] == "templated match":
                 rule["ruleType"] = "match"
-            if "descriptionExpression" not in rule.keys():
+            if "descriptionExpression" not in list(rule.keys()):
                 rule["descriptionExpression"] = rule["description"]
 
         rules = [rule for rule in rules if rule["ruleType"] in types]
@@ -750,4 +747,3 @@ class SumoLogic(object):
 
     def delete_monitor_folder(self, folder_id):
         return self.delete('/monitors/%s' % folder_id)
-

@@ -12,12 +12,14 @@ flake8 = ">=3.3.0,<4"
 pre-commit = "*"  # https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
 pytest = "*"
 requests = "*"
+twine = "*"
+build = "*"
 
 [packages]
 requests = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.12"
 
 [pipenv]
 allow_prereleases = true
