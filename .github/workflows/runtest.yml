@@ -1,0 +1,31 @@
+name: "Run Security & Linting tests"
+on: [workflow_dispatch, pull_request]
+
+jobs:
+  run-test:
+    name: "Run Security & Linting Tests"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install pipenv and mypy
+        run: pip install pipenv mypy
+
+      - name: Install dependencies
+        run: |
+          pipenv install --dev
+
+      - name: Run Security Tests
+        continue-on-error: true
+        run: |
+          pipenv run bandit sumologic/*.py
+
+      - name: Run Linting Tests
+        run: |
+          pipenv run flake8 --max-line-length=120 sumologic/*.py

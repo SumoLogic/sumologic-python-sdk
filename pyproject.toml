@@ -1,0 +1,33 @@
+[project]
+name = "sumologic-sdk"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+authors = [
+  { name="SumoLogic", email="apps-team@sumologic.com" }
+]
+license = {file = "LICENSE"}
+description = "Sumo Logic Python SDK"
+readme = "README.md"
+dynamic = ["dependencies", "version"]
+keywords= ["sumologic", "python", "sdk", "rest", "api", "log", "management", "analytics", "logreduce", "security", "siem", "collector", "forwarder"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+version = {file = ["VERSION"]}
+
+[project.urls]
+Homepage = "https://github.com/SumoLogic/sumologic-python-sdk"
+Issues = "https://github.com/SumoLogic/sumologic-python-sdk/issues"
+Changelog = "https://github.com/SumoLogic/sumologic-python-sdk/blob/master/CHANGELOG.md"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

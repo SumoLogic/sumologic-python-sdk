@@ -1,7 +1,8 @@
 include requirements.txt
 include LICENSE
 include VERSION
-include README
-include sumologic *.py
+include README.md
+recursive-include sumologic *.py
 recursive-exclude scripts *
+recursive-exclude test *
 

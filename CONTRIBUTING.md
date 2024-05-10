@@ -20,8 +20,28 @@ Contributing to cookbook-elasticsearch
 1. After reviewing commits for documentation, passing CI tests, and good descriptive commit messages, merge it with either "squash and merge" or "rebase and merge" do not use the
 "merge pull request" as it does not do a fast forward first.
 
+### Upgrading to new python versions
 
-### Releasing
+1. Update python version in `Pipfile`.
+1. Run `pipenv update --python <new version ex 3.12>` will update the `Pipfile.lock` file.
+1. Run `pyupgrade sumologic/sumologic.py` will upgrade the syntax.
+1. Run `pipenv run bandit sumologic/sumologic.py` will find common security issues.
+1. Run `pipenv run flake8 sumologic/sumologic.py` will find linting issues.
+
+### Building and Releasing
 
 1. Create/update the changelog entries and evaluate the type of release.
 1. create a git release with something like hub, example: `hub release create vMajor.Minor.patch`
+1. Run `pip install pipenv` to install pipenv
+1. Run `pipenv install --dev` to install dev dependencies
+1. Run `pipenv run python -m build`
+1. Run `pipenv run python -m twine upload  dist/*` to publish in pypi repository
+
+### Testing
+1. Generate the access keys by following the sumologic [docs](https://help.sumologic.com/docs/manage/security/access-keys/#from-the-preferences-page). The user should have `Manage Collectors` permissions.
+1. export the below environment variables
+` export SUMOLOGIC_ACCESS_ID=<your user's access id>
+  export SUMOLOGIC_ACCESS_KEY = <your user's access key>
+`
+1. Run the unit tests present in `test` folder
+`python -m unittest`
