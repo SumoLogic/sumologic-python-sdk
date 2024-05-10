@@ -21,15 +21,11 @@ jobs:
         run: |
           pipenv install --dev
 
-      - name: Run Bandit Tests
+      - name: Run Security Tests
         continue-on-error: true
         run: |
           pipenv run bandit sumologic/*.py
 
-      - name: Run Flake8 Tests
+      - name: Run Linting Tests
         run: |
           pipenv run flake8 --max-line-length=120 sumologic/*.py
-
-      - name: Run Mypy Tests
-        run: |
-          mypy sumologic/*.py

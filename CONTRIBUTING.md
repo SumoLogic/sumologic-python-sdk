@@ -26,7 +26,7 @@ Contributing to cookbook-elasticsearch
 1. Run `pipenv update --python <new version ex 3.12>` will update the `Pipfile.lock` file.
 1. Run `pyupgrade sumologic/sumologic.py` will upgrade the syntax.
 1. Run `pipenv run bandit sumologic/sumologic.py` will find common security issues.
-1. Run `pipenv run flake8 sumologic/sumologic.py` will fix linting.
+1. Run `pipenv run flake8 sumologic/sumologic.py` will find linting issues.
 
 ### Building and Releasing
 
