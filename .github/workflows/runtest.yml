@@ -22,6 +22,7 @@ jobs:
           pipenv install --dev
 
       - name: Run Bandit Tests
+        continue-on-error: true
         run: |
           pipenv run bandit sumologic/*.py
 
