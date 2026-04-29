@@ -1,6 +1,21 @@
 # CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
+## [Unreleased]
+### Security
+- Upgraded `certifi` to `>=2026.4.22` to remove the revoked GLOBALTRUST root certificate
+- Upgraded `setuptools` to `>=78.1.1` to fix Command Injection via package URL (CVE-2024-6345) and path traversal in `PackageIndex.download` leading to Arbitrary File Write
+- Upgraded `urllib3` to `>=2.6.3` to fix unbounded decompression chain vulnerability
+- Upgraded `requests` to `>=2.33.1` to fix decompression-bomb safeguards being bypassed when following HTTP redirects
+- Upgraded `virtualenv` to `>=21.3.0` to fix command injection through activation scripts
+- Upgraded `filelock` to `>=3.29.0` to fix TOCTOU race condition allowing symlink attacks during lock file creation
+- Upgraded `zipp` to `>=3.19.1` to fix Denial of Service vulnerability
+- Upgraded `pygments` to `>=2.20.0` to fix ReDoS vulnerability
+- Updated `black` in pre-commit hooks to fix arbitrary file writes from unsanitized user input in cache file name
+
+### Breaking Changes
+- Dependency upgrades in this release add Python 3.14 support but may drop support for older Python versions (3.8 and 3.9) that were previously supported. Treat the Python version support change as a breaking change when upgrading
+
 ## [0.1.16]
 ### Fixed
 - Fixed Retry logic and bug related to headers to make it compatible with newer python versions

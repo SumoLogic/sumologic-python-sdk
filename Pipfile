@@ -4,22 +4,29 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+virtualenv = ">=21.3.0"
+setuptools = ">=78.1.1"
+filelock = ">=3.29.0"
+zipp = ">=3.19.1"
+pygments = ">=2.20.0"
+certifi = ">=2026.4.22"
+pyupgrade = "*"
 bandit = "*"   # https://github.com/PyCQA/bandit
 better_exceptions = "*"
 black = "*"
 pipenv = {path = ".", editable = true, extras = ["test"]}
 flake8 = "*"
 pre-commit = "*"  # https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
-pytest = "*"
+pytest = ">=9.0.3"
 requests = "*"
 twine = "*"
 build = "*"
 
 [packages]
-requests = "*"
+requests = ">=2.33.1"
 
 [requires]
-python_version = "3.12"
+python_version = "3.14"
 
 [pipenv]
 allow_prereleases = true
