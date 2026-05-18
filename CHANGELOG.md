@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG
 - Updated `black` in pre-commit hooks to fix arbitrary file writes from unsanitized user input in cache file name
 
 ### Breaking Changes
-- Dependency upgrades in this release add Python 3.14 support but may drop support for older Python versions (3.8 and 3.9) that were previously supported. Treat the Python version support change as a breaking change when upgrading
+- Dependency upgrades in this release add Python 3.14 support and drop support for older Python versions (3.8 and 3.9) that were previously supported. Treat the Python version support change as a breaking change when upgrading
 
 ## [0.1.16]
 ### Fixed
