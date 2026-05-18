@@ -1,4 +1,5 @@
 import json
+
 import requests
 import os
 import sys
@@ -274,7 +275,7 @@ class SumoLogic:
         return self.post('/content/folders/%s/synchronize' % folder_id, params=content, version='v2')
 
     def check_sync_folder(self, folder_id, job_id):
-        return self.get('/content/folders/%s/synchronize/%s/status' % (folder_id, job_id), version='v2')
+        return self.get('/content/folders/{}/synchronize/{}/status'.format(folder_id, job_id), version='v2')
 
     def delete_folder(self, folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
@@ -319,11 +320,11 @@ class SumoLogic:
 
     def import_content(self, folder_id, content, is_overwrite="false", isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
-        return self.post('/content/folders/%s/import?overwrite=%s' % (folder_id, is_overwrite), headers=headers, params=content,
+        return self.post('/content/folders/{}/import?overwrite={}'.format(folder_id, is_overwrite), headers=headers, params=content,
                          version='v2')
 
     def check_import_status(self, folder_id, job_id):
-        return self.get('/content/folders/%s/import/%s/status' % (folder_id, job_id), version='v2')
+        return self.get('/content/folders/{}/import/{}/status'.format(folder_id, job_id), version='v2')
 
     def get_folder(self, folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
@@ -335,22 +336,22 @@ class SumoLogic:
 
     def copy_folder(self, folder_id, destination_folder_id, isAdmin=False):
         headers = {'isAdminMode': 'true'} if isAdmin else {}
-        return self.post('/content/%s/copy?destinationFolder=%s' % (folder_id, destination_folder_id), headers=headers, params={}, version='v2')
+        return self.post('/content/{}/copy?destinationFolder={}'.format(folder_id, destination_folder_id), headers=headers, params={}, version='v2')
 
     def export_content(self, content_id):
         return self.post('/content/%s/export' % content_id, params="", version='v2')
 
     def check_export_status(self, content_id, job_id):
-        return self.get('/content/%s/export/%s/status' % (content_id, job_id), version='v2')
+        return self.get('/content/{}/export/{}/status'.format(content_id, job_id), version='v2')
 
     def get_export_content_result(self, content_id, job_id):
-        return self.get('/content/%s/export/%s/result' % (content_id, job_id), version='v2')
+        return self.get('/content/{}/export/{}/result'.format(content_id, job_id), version='v2')
 
     def delete_content(self, content_id):
         return self.delete('/content/%s/delete' % content_id, version='v2')
 
     def check_delete_status(self, content_id, job_id):
-        return self.get('/content/%s/delete/%s/status' % (content_id, job_id), version='v2')
+        return self.get('/content/{}/delete/{}/status'.format(content_id, job_id), version='v2')
 
     def get_content(self, path):
         return self.get('/content/path?path=%s' % path, version='v2')
@@ -359,14 +360,14 @@ class SumoLogic:
         return self.get('/content/%s/path' % content_id, version='v2')
 
     def copy_content(self, content_id, destination_folder):
-        return self.post('/content/%s/copy?destinationFolder=%s' % (content_id, destination_folder), params=None,
+        return self.post('/content/{}/copy?destinationFolder={}'.format(content_id, destination_folder), params=None,
                          version='v2')
 
     def check_copy_status(self, content_id, job_id):
-        return self.get('/content/%s/copy/%s/status' % (content_id, job_id), version='v2')
+        return self.get('/content/{}/copy/{}/status'.format(content_id, job_id), version='v2')
 
     def move_content(self, content_id, destination_folder):
-        return self.post('/content/%s/move?destinationFolderId=%s' % (content_id, destination_folder), params=None,
+        return self.post('/content/{}/move?destinationFolderId={}'.format(content_id, destination_folder), params=None,
                          version='v2')
 
     def get_content_item_by_path(self, path):

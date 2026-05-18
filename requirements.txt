@@ -1,1 +1,7 @@
-requests>=2.32.0
+requests>=2.33.1
+certifi>=2026.4.22
+urllib3>=2.6.3
+pytest>=9.0.3
+filelock>=3.29.0
+virtualenv>=21.3.0
+pygments>=2.20.0
