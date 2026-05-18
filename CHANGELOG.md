@@ -1,7 +1,7 @@
 # CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
-## [Unreleased]
+## [0.2.0] - 2026-05-18
 ### Security
 - Upgraded `certifi` to `>=2026.4.22` to remove the revoked GLOBALTRUST root certificate
 - Upgraded `setuptools` to `>=78.1.1` to fix Command Injection via package URL (CVE-2024-6345) and path traversal in `PackageIndex.download` leading to Arbitrary File Write
