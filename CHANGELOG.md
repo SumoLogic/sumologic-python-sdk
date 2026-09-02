@@ -1,6 +1,10 @@
 # CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
+## [0.2.1] - 2026-09-02
+### Security
+- Upgraded `setuptools` to `>=83.0.0` to fix MANIFEST.in exclusion bypass via Unicode normalization collision on macOS APFS/HFS+ (CVE-2026-59890, GHSA-h35f-9h28-mq5c)
+
 ## [0.2.0] - 2026-05-18
 ### Security
 - Upgraded `certifi` to `>=2026.4.22` to remove the revoked GLOBALTRUST root certificate
