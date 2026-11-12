@@ -1,7 +1,7 @@
 requests>=2.33.1
-certifi>=2026.4.22
-urllib3>=2.6.3
+certifi>=2026.10.18
+urllib3>=2.8.0
 pytest>=9.0.3
-filelock>=3.29.0
-virtualenv>=21.3.0
+filelock>=4.2.1; python_version >= '3.11'
+virtualenv>=21.14.9
 pygments>=2.20.0
