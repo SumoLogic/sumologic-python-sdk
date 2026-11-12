@@ -1,6 +1,15 @@
 # CHANGELOG for sumologic-python-sdk
 This project adheres to [Semantic Versioning](http://semver.org/). The CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
+## [0.2.2] - 2026-11-13
+### Security
+- Upgraded `urllib3` to `>=2.8.0` to fix high severity vulnerabilities
+- Upgraded `certifi` to `>=2026.10.18` to fix a critical severity vulnerability
+- Upgraded `filelock` to `>=4.2.1` (Python 3.11+ only, as `filelock` 4.x requires it) to fix multiple vulnerabilities
+- Upgraded `virtualenv` to `>=21.14.9` to fix multiple vulnerabilities
+- Upgraded `setuptools` to `>=84.1.0` in the build requirements
+- Upgraded `black` to `>=26.10.1` in dev dependencies
+
 ## [0.2.1] - 2026-09-02
 ### Security
 - Upgraded `setuptools` to `>=83.0.0` to fix MANIFEST.in exclusion bypass via Unicode normalization collision on macOS APFS/HFS+ (CVE-2026-59890, GHSA-h35f-9h28-mq5c)
